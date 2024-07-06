@@ -32,6 +32,10 @@
             margin-bottom: 10px;
         }
 
+        .form-container {
+            display: none;
+        }
+
         form {
             display: flex;
             flex-direction: column;
@@ -44,7 +48,8 @@
 
         input[type="text"],
         input[type="number"],
-        input[type="radio"] {
+        input[type="radio"],
+        button {
             margin-bottom: 15px;
             padding: 10px;
             border: 1px solid #ddd;
@@ -66,21 +71,6 @@
             margin-right: 5px;
         }
 
-        button {
-            padding: 10px;
-            border: none;
-            border-radius: 5px;
-            background-color: #5a67d8;
-            color: #fff;
-            font-size: 1em;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        button:hover {
-            background-color: #434190;
-        }
-
         .result {
             display: none;
             text-align: center;
@@ -98,57 +88,136 @@
             font-size: 1.2em;
             font-weight: bold;
         }
+
+        .hidden {
+            display: none;
+        }
     </style>
     <script>
-        function calculateScore(record, min, max) {
-            let score = (record - min) * (100 - 50) / (max - min) + 50;
-            return Math.max(0, Math.min(100, score));
+        function showForm(type) {
+            document.getElementById('selection').style.display = 'none';
+            document.getElementById('inputFormContainer').style.display = 'block';
+            document.getElementById('formType').value = type;
+            document.getElementById('academicLabel').textContent = type === 'suji' ? '내신점수(300):' : '수능점수(600):';
+        }
+
+        function calculateScore(record, min, max, type) {
+            if (type === 'suji') {
+                let score = (record - min) * (100 - 50) / (max - min) + 50;
+                return Math.max(0, Math.min(100, score));
+            } else if (type === 'jeongsi') {
+                let score = (record - min) / (max - min) * 100;
+                return Math.max(0, Math.min(100, score));
+            }
+        }
+
+        function validateInput(value, name) {
+            if (isNaN(value) || value === "") {
+                throw new Error(name + " 기록을 정확하게 입력해주세요.");
+            }
         }
 
         function convertScores() {
-            let name = document.getElementById('name').value;
-            let gender = document.querySelector('input[name="gender"]:checked').value;
-            let standingJump = parseFloat(document.getElementById('standingJump').value);
-            let weightedRun = parseFloat(document.getElementById('weightedRun').value);
-            let backStrength = parseFloat(document.getElementById('backStrength').value);
-            let sitAndReach = parseFloat(document.getElementById('sitAndReach').value);
-            let academicScore = parseFloat(document.getElementById('academicScore').value);
+            try {
+                let name = document.getElementById('name').value;
+                let academy = document.getElementById('academy').value;
+                let formType = document.getElementById('formType').value;
+                let gender = document.querySelector('input[name="gender"]:checked').value;
+                let standingJump = parseFloat(document.getElementById('standingJump').value);
+                let weightedRun = parseFloat(document.getElementById('weightedRun').value);
+                let backStrength = parseFloat(document.getElementById('backStrength').value);
+                let sitAndReach = parseFloat(document.getElementById('sitAndReach').value);
+                let academicScore = parseFloat(document.getElementById('academicScore').value);
 
-            let scores = {
-                standingJump: 0,
-                weightedRun: 0,
-                backStrength: 0,
-                sitAndReach: 0
-            };
+                validateInput(standingJump, "제자리멀리뛰기");
+                validateInput(weightedRun, "중량메고달리기");
+                validateInput(backStrength, "배근력");
+                validateInput(sitAndReach, "좌전굴");
+                validateInput(academicScore, formType === 'suji' ? '내신 점수' : '수능 점수');
 
-            if (gender === 'male') {
-                scores.standingJump = calculateScore(standingJump, 254, 300);
-                scores.weightedRun = calculateScore(weightedRun, 9.9, 7.19);
-                scores.backStrength = calculateScore(backStrength, 130, 220);
-                scores.sitAndReach = calculateScore(sitAndReach, 11.9, 30);
-            } else {
-                scores.standingJump = calculateScore(standingJump, 199, 250);
-                scores.weightedRun = calculateScore(weightedRun, 10.9, 7.6);
-                scores.backStrength = calculateScore(backStrength, 60, 151);
-                scores.sitAndReach = calculateScore(sitAndReach, 13.9, 32);
+                let scores = {
+                    standingJump: 0,
+                    weightedRun: 0,
+                    backStrength: 0,
+                    sitAndReach: 0
+                };
+
+                if (formType === 'suji') {
+                    if (gender === 'male') {
+                        scores.standingJump = calculateScore(standingJump, 254, 300, 'suji');
+                        scores.weightedRun = calculateScore(weightedRun, 9.9, 7.19, 'suji');
+                        scores.backStrength = calculateScore(backStrength, 130, 220, 'suji');
+                        scores.sitAndReach = calculateScore(sitAndReach, 11.9, 30, 'suji');
+                    } else {
+                        scores.standingJump = calculateScore(standingJump, 199, 250, 'suji');
+                        scores.weightedRun = calculateScore(weightedRun, 10.9, 7.6, 'suji');
+                        scores.backStrength = calculateScore(backStrength, 60, 151, 'suji');
+                        scores.sitAndReach = calculateScore(sitAndReach, 13.9, 32, 'suji');
+                    }
+
+                    let practicalTotal = (scores.standingJump + scores.weightedRun + scores.backStrength + scores.sitAndReach) * 7 / 4;
+                    let totalScore = academicScore + practicalTotal;
+
+                    document.getElementById('standingJumpRecord').textContent = standingJump.toFixed(2);
+                    document.getElementById('weightedRunRecord').textContent = weightedRun.toFixed(2);
+                    document.getElementById('backStrengthRecord').textContent = backStrength.toFixed(2);
+                    document.getElementById('sitAndReachRecord').textContent = sitAndReach.toFixed(2);
+
+                    document.getElementById('standingJumpScore').textContent = scores.standingJump.toFixed(2);
+                    document.getElementById('weightedRunScore').textContent = scores.weightedRun.toFixed(2);
+                    document.getElementById('backStrengthScore').textContent = scores.backStrength.toFixed(2);
+                    document.getElementById('sitAndReachScore').textContent = scores.sitAndReach.toFixed(2);
+                    document.getElementById('practicalTotal').textContent = practicalTotal.toFixed(2);
+                    document.getElementById('totalScore').textContent = totalScore.toFixed(2);
+                    document.getElementById('academicScoreResult').textContent = academicScore.toFixed(2);
+                    document.getElementById('academicScoreLabel').textContent = '내신 점수:';
+                    document.getElementById('studentName').textContent = name;
+                    document.getElementById('academyName').textContent = academy;
+                } else if (formType === 'jeongsi') {
+                    if (gender === 'male') {
+                        scores.standingJump = calculateScore(standingJump, 254, 300, 'jeongsi');
+                        scores.weightedRun = calculateScore(weightedRun, 9.9, 7.19, 'jeongsi');
+                        scores.backStrength = calculateScore(backStrength, 130, 220, 'jeongsi');
+                        scores.sitAndReach = calculateScore(sitAndReach, 11.9, 30, 'jeongsi');
+                    } else {
+                        scores.standingJump = calculateScore(standingJump, 199, 250, 'jeongsi');
+                        scores.weightedRun = calculateScore(weightedRun, 10.9, 7.6, 'jeongsi');
+                        scores.backStrength = calculateScore(backStrength, 60, 151, 'jeongsi');
+                        scores.sitAndReach = calculateScore(sitAndReach, 13.9, 32, 'jeongsi');
+                    }
+
+                    let practicalTotal = scores.standingJump + scores.weightedRun + scores.backStrength + scores.sitAndReach;
+                    let totalScore = academicScore + practicalTotal;
+
+                    document.getElementById('standingJumpRecord').textContent = standingJump.toFixed(2);
+                    document.getElementById('weightedRunRecord').textContent = weightedRun.toFixed(2);
+                    document.getElementById('backStrengthRecord').textContent = backStrength.toFixed(2);
+                    document.getElementById('sitAndReachRecord').textContent = sitAndReach.toFixed(2);
+
+                    document.getElementById('standingJumpScore').textContent = scores.standingJump.toFixed(2);
+                    document.getElementById('weightedRunScore').textContent = scores.weightedRun.toFixed(2);
+                    document.getElementById('backStrengthScore').textContent = scores.backStrength.toFixed(2);
+                    document.getElementById('sitAndReachScore').textContent = scores.sitAndReach.toFixed(2);
+                    document.getElementById('practicalTotal').textContent = practicalTotal.toFixed(2);
+                    document.getElementById('totalScore').textContent = totalScore.toFixed(2);
+                    document.getElementById('academicScoreResult').textContent = academicScore.toFixed(2);
+                    document.getElementById('academicScoreLabel').textContent = '수능 점수:';
+                    document.getElementById('studentName').textContent = name;
+                    document.getElementById('academyName').textContent = academy;
+                }
+
+                // 입력 폼 숨기기
+                document.getElementById('inputFormContainer').style.display = 'none';
+                // 결과 표시
+                document.getElementById('result').style.display = 'block';
+            } catch (error) {
+                alert("에러 발생: " + error.message);
             }
+        }
 
-            let practicalTotal = (scores.standingJump + scores.weightedRun + scores.backStrength + scores.sitAndReach) * 7 / 4;
-            let totalScore = academicScore + practicalTotal;
-
-            document.getElementById('standingJumpScore').textContent = scores.standingJump.toFixed(2);
-            document.getElementById('weightedRunScore').textContent = scores.weightedRun.toFixed(2);
-            document.getElementById('backStrengthScore').textContent = scores.backStrength.toFixed(2);
-            document.getElementById('sitAndReachScore').textContent = scores.sitAndReach.toFixed(2);
-            document.getElementById('practicalTotal').textContent = practicalTotal.toFixed(2);
-            document.getElementById('totalScore').textContent = totalScore.toFixed(2);
-            document.getElementById('academicScoreResult').textContent = academicScore.toFixed(2);
-            document.getElementById('studentName').textContent = name;
-
-            // 입력 폼 숨기기
-            document.getElementById('inputForm').style.display = 'none';
-            // 결과 표시
-            document.getElementById('result').style.display = 'block';
+        function resetForm() {
+            // 페이지 새로고침
+            location.reload();
         }
     </script>
 </head>
@@ -156,12 +225,21 @@
     <div class="container">
         <h1>동국대학교 체육교육과</h1>
         <h2>점수변환 프로그램</h2>
-        <div id="inputForm">
-            <form>
+
+        <div id="selection">
+            <button onclick="showForm('suji')">수시</button>
+            <button onclick="showForm('jeongsi')">정시</button>
+        </div>
+
+        <div id="inputFormContainer" class="form-container">
+            <form id="inputForm">
+                <input type="hidden" id="formType" name="formType">
                 <label for="name">이름:</label>
                 <input type="text" id="name" name="name">
                 <label for="year">학년:</label>
                 <input type="text" id="year" name="year">
+                <label for="academy">체대입시학원명:</label>
+                <input type="text" id="academy" name="academy">
                 <div class="gender-container">
                     <label for="gender">성별:</label>
                     <input type="radio" id="male" name="gender" value="male">
@@ -169,7 +247,7 @@
                     <input type="radio" id="female" name="gender" value="female">
                     <label for="female">여자</label>
                 </div>
-                <label for="academicScore">내신점수(300):</label>
+                <label id="academicLabel" for="academicScore">내신점수(300):</label>
                 <input type="number" id="academicScore" name="academicScore">
                 <h3>실기종목</h3>
                 <label for="standingJump">제자리멀리뛰기:</label>
@@ -187,16 +265,19 @@
                 <button type="button" onclick="convertScores()">점수 변환하기</button>
             </form>
         </div>
+
         <div id="result" class="result">
             <h3>결과</h3>
             <p class="bold"><span id="studentName"></span> 학생의 점수</p>
-            <p>내신 점수: <span id="academicScoreResult"></span></p>
-            <p>제자리멀리뛰기 점수: <span id="standingJumpScore"></span></p>
-            <p>중량메고달리기 점수: <span id="weightedRunScore"></span></p>
-            <p>배근력 점수: <span id="backStrengthScore"></span></p>
-            <p>좌전굴 점수: <span id="sitAndReachScore"></span></p>
-            <p>실기총점 (환산 700): <span id="practicalTotal"></span></p>
+            <p>체대입시학원명: <span id="academyName"></span></p>
+            <p id="academicScoreLabel">내신 점수: <span id="academicScoreResult"></span></p>
+            <p>제자리멀리뛰기 기록: <span id="standingJumpRecord"></span>, 점수: <span id="standingJumpScore"></span></p>
+            <p>중량메고달리기 기록: <span id="weightedRunRecord"></span>, 점수: <span id="weightedRunScore"></span></p>
+            <p>배근력 기록: <span id="backStrengthRecord"></span>, 점수: <span id="backStrengthScore"></span></p>
+            <p>좌전굴 기록: <span id="sitAndReachRecord"></span>, 점수: <span id="sitAndReachScore"></span></p>
+            <p>실기총점: <span id="practicalTotal"></span></p>
             <p class="total-score">총점: <span id="totalScore"></span></p>
+            <button onclick="resetForm()">재입력</button>
         </div>
     </div>
 </body>
