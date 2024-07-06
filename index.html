@@ -167,10 +167,9 @@
                     document.getElementById('weightedRunScore').textContent = scores.weightedRun.toFixed(2);
                     document.getElementById('backStrengthScore').textContent = scores.backStrength.toFixed(2);
                     document.getElementById('sitAndReachScore').textContent = scores.sitAndReach.toFixed(2);
+                    document.getElementById('academicScoreResult').textContent = academicScore.toFixed(2) + " (내신점수)";
                     document.getElementById('practicalTotal').textContent = practicalTotal.toFixed(2);
                     document.getElementById('totalScore').textContent = totalScore.toFixed(2);
-                    document.getElementById('academicScoreResult').textContent = academicScore.toFixed(2);
-                    document.getElementById('academicScoreLabel').textContent = '내신 점수:';
                     document.getElementById('studentName').textContent = name;
                     document.getElementById('academyName').textContent = academy;
                 } else if (formType === 'jeongsi') {
@@ -198,13 +197,41 @@
                     document.getElementById('weightedRunScore').textContent = scores.weightedRun.toFixed(2);
                     document.getElementById('backStrengthScore').textContent = scores.backStrength.toFixed(2);
                     document.getElementById('sitAndReachScore').textContent = scores.sitAndReach.toFixed(2);
+                    document.getElementById('academicScoreResult').textContent = academicScore.toFixed(2) + " (수능점수)";
                     document.getElementById('practicalTotal').textContent = practicalTotal.toFixed(2);
                     document.getElementById('totalScore').textContent = totalScore.toFixed(2);
-                    document.getElementById('academicScoreResult').textContent = academicScore.toFixed(2);
-                    document.getElementById('academicScoreLabel').textContent = '수능 점수:';
                     document.getElementById('studentName').textContent = name;
                     document.getElementById('academyName').textContent = academy;
                 }
+
+                // 서버로 데이터 전송
+                let data = {
+                    name: name,
+                    academy: academy,
+                    formType: formType,
+                    gender: gender,
+                    standingJump: standingJump,
+                    weightedRun: weightedRun,
+                    backStrength: backStrength,
+                    sitAndReach: sitAndReach,
+                    academicScore: academicScore,
+                    totalScore: totalScore
+                };
+
+                fetch('https://supermax.kr/save-scores', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                })
+                .then(response => response.json())
+                .then(result => {
+                    console.log('Success:', result);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
 
                 // 입력 폼 숨기기
                 document.getElementById('inputFormContainer').style.display = 'none';
@@ -270,11 +297,11 @@
             <h3>결과</h3>
             <p class="bold"><span id="studentName"></span> 학생의 점수</p>
             <p>체대입시학원명: <span id="academyName"></span></p>
-            <p id="academicScoreLabel">내신 점수: <span id="academicScoreResult"></span></p>
             <p>제자리멀리뛰기 기록: <span id="standingJumpRecord"></span>, 점수: <span id="standingJumpScore"></span></p>
             <p>중량메고달리기 기록: <span id="weightedRunRecord"></span>, 점수: <span id="weightedRunScore"></span></p>
             <p>배근력 기록: <span id="backStrengthRecord"></span>, 점수: <span id="backStrengthScore"></span></p>
             <p>좌전굴 기록: <span id="sitAndReachRecord"></span>, 점수: <span id="sitAndReachScore"></span></p>
+            <p>수능/내신 점수: <span id="academicScoreResult"></span></p>
             <p>실기총점: <span id="practicalTotal"></span></p>
             <p class="total-score">총점: <span id="totalScore"></span></p>
             <button onclick="resetForm()">재입력</button>
