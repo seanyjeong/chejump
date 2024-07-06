@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>동국대학교 체육교육과 점수변환 프로그램</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f4f4f9;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+        }
+
+        h1, h2 {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="radio"] {
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+            width: calc(100% - 22px); /* Adjusted for padding */
+        }
+
+        .gender-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .gender-container input[type="radio"] {
+            width: auto;
+            margin-left: 10px;
+            margin-right: 5px;
+        }
+
+        button {
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #5a67d8;
+            color: #fff;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #434190;
+        }
+
+        .result {
+            display: none;
+            text-align: center;
+        }
+
+        .result p {
+            margin: 10px 0;
+        }
+
+        .result .bold {
+            font-weight: bold;
+        }
+
+        .result .total-score {
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+    </style>
+    <script>
+        function calculateScore(record, min, max) {
+            let score = (record - min) * (100 - 50) / (max - min) + 50;
+            return Math.max(0, Math.min(100, score));
+        }
+
+        function convertScores() {
+            let name = document.getElementById('name').value;
+            let gender = document.querySelector('input[name="gender"]:checked').value;
+            let standingJump = parseFloat(document.getElementById('standingJump').value);
+            let weightedRun = parseFloat(document.getElementById('weightedRun').value);
+            let backStrength = parseFloat(document.getElementById('backStrength').value);
+            let sitAndReach = parseFloat(document.getElementById('sitAndReach').value);
+            let academicScore = parseFloat(document.getElementById('academicScore').value);
+
+            let scores = {
+                standingJump: 0,
+                weightedRun: 0,
+                backStrength: 0,
+                sitAndReach: 0
+            };
+
+            if (gender === 'male') {
+                scores.standingJump = calculateScore(standingJump, 254, 300);
+                scores.weightedRun = calculateScore(weightedRun, 9.9, 7.19);
+                scores.backStrength = calculateScore(backStrength, 130, 220);
+                scores.sitAndReach = calculateScore(sitAndReach, 11.9, 30);
+            } else {
+                scores.standingJump = calculateScore(standingJump, 199, 250);
+                scores.weightedRun = calculateScore(weightedRun, 10.9, 7.6);
+                scores.backStrength = calculateScore(backStrength, 60, 151);
+                scores.sitAndReach = calculateScore(sitAndReach, 13.9, 32);
+            }
+
+            let practicalTotal = (scores.standingJump + scores.weightedRun + scores.backStrength + scores.sitAndReach) * 7 / 4;
+            let totalScore = academicScore + practicalTotal;
+
+            document.getElementById('standingJumpScore').textContent = scores.standingJump.toFixed(2);
+            document.getElementById('weightedRunScore').textContent = scores.weightedRun.toFixed(2);
+            document.getElementById('backStrengthScore').textContent = scores.backStrength.toFixed(2);
+            document.getElementById('sitAndReachScore').textContent = scores.sitAndReach.toFixed(2);
+            document.getElementById('practicalTotal').textContent = practicalTotal.toFixed(2);
+            document.getElementById('totalScore').textContent = totalScore.toFixed(2);
+            document.getElementById('academicScoreResult').textContent = academicScore.toFixed(2);
+            document.getElementById('studentName').textContent = name;
+
+            // 입력 폼 숨기기
+            document.getElementById('inputForm').style.display = 'none';
+            // 결과 표시
+            document.getElementById('result').style.display = 'block';
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>동국대학교 체육교육과</h1>
+        <h2>점수변환 프로그램</h2>
+        <div id="inputForm">
+            <form>
+                <label for="name">이름:</label>
+                <input type="text" id="name" name="name">
+                <label for="year">학년:</label>
+                <input type="text" id="year" name="year">
+                <div class="gender-container">
+                    <label for="gender">성별:</label>
+                    <input type="radio" id="male" name="gender" value="male">
+                    <label for="male">남자</label>
+                    <input type="radio" id="female" name="gender" value="female">
+                    <label for="female">여자</label>
+                </div>
+                <label for="academicScore">내신점수(300):</label>
+                <input type="number" id="academicScore" name="academicScore">
+                <h3>실기종목</h3>
+                <label for="standingJump">제자리멀리뛰기:</label>
+                <input type="number" id="standingJump" name="standingJump">
+                <br>
+                <label for="weightedRun">중량메고달리기:</label>
+                <input type="number" id="weightedRun" name="weightedRun">
+                <br>
+                <label for="backStrength">배근력:</label>
+                <input type="number" id="backStrength" name="backStrength">
+                <br>
+                <label for="sitAndReach">좌전굴:</label>
+                <input type="number" id="sitAndReach" name="sitAndReach">
+                <br>
+                <button type="button" onclick="convertScores()">점수 변환하기</button>
+            </form>
+        </div>
+        <div id="result" class="result">
+            <h3>결과</h3>
+            <p class="bold"><span id="studentName"></span> 학생의 점수</p>
+            <p>내신 점수: <span id="academicScoreResult"></span></p>
+            <p>제자리멀리뛰기 점수: <span id="standingJumpScore"></span></p>
+            <p>중량메고달리기 점수: <span id="weightedRunScore"></span></p>
+            <p>배근력 점수: <span id="backStrengthScore"></span></p>
+            <p>좌전굴 점수: <span id="sitAndReachScore"></span></p>
+            <p>실기총점 (환산 700): <span id="practicalTotal"></span></p>
+            <p class="total-score">총점: <span id="totalScore"></span></p>
+        </div>
+    </div>
+</body>
+</html>
