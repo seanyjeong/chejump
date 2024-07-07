@@ -205,60 +205,42 @@
                 }
 
                 // 서버로 데이터 전송
-function convertScores() {
-  try {
-    let name = document.getElementById('name').value;
-    let academy = document.getElementById('academy').value;
-    let formType = document.getElementById('formType').value;
-    let gender = document.querySelector('input[name="gender"]:checked').value;
-    let standingJump = parseFloat(document.getElementById('standingJump').value);
-    let weightedRun = parseFloat(document.getElementById('weightedRun').value);
-    let backStrength = parseFloat(document.getElementById('backStrength').value);
-    let sitAndReach = parseFloat(document.getElementById('sitAndReach').value);
-    let academicScore = parseFloat(document.getElementById('academicScore').value);
+                let data = {
+                    name: name,
+                    academy: academy,
+                    formType: formType,
+                    gender: gender,
+                    standingJump: standingJump,
+                    weightedRun: weightedRun,
+                    backStrength: backStrength,
+                    sitAndReach: sitAndReach,
+                    academicScore: academicScore,
+                    totalScore: totalScore
+                };
 
-    validateInput(standingJump, "제자리멀리뛰기");
-    validateInput(weightedRun, "중량메고달리기");
-    validateInput(backStrength, "배근력");
-    validateInput(sitAndReach, "좌전굴");
-    validateInput(academicScore, formType === 'suji' ? '내신 점수' : '수능 점수');
+                fetch('https://supermax.kr/save-scores', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                })
+                .then(response => response.json())
+                .then(result => {
+                    console.log('Success:', result);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
 
-    let totalScore = calculateTotalScore({ standingJump, weightedRun, backStrength, sitAndReach, academicScore, formType, gender });
-
-    // 서버로 데이터 전송
-    let data = {
-      name: name,
-      academy: academy,
-      formType: formType,
-      gender: gender,
-      standingJump: standingJump,
-      weightedRun: weightedRun,
-      backStrength: backStrength,
-      sitAndReach: sitAndReach,
-      academicScore: academicScore,
-      totalScore: totalScore
-    };
-
-    fetch('https://supermax.kr/save-scores', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(data)
-    })
-    .then(response => response.json())
-    .then(result => {
-      console.log('Success:', result);
-    })
-    .catch(error => {
-      console.error('Error:', error);
-    });
-
-  } catch (error) {
-    alert("에러 발생: " + error.message);
-  }
-}
-
+                // 입력 폼 숨기기
+                document.getElementById('inputFormContainer').style.display = 'none';
+                // 결과 표시
+                document.getElementById('result').style.display = 'block';
+            } catch (error) {
+                alert("에러 발생: " + error.message);
+            }
+        }
 
         function resetForm() {
             // 페이지 새로고침
@@ -326,4 +308,4 @@ function convertScores() {
         </div>
     </div>
 </body>
-</html>
+</html> 
