@@ -117,7 +117,7 @@
             }
         }
 
-        async function convertScores() {
+        function convertScores() {
             try {
                 let name = document.getElementById('name').value;
                 let academy = document.getElementById('academy').value;
@@ -156,7 +156,7 @@
                     }
 
                     let practicalTotal = (scores.standingJump + scores.weightedRun + scores.backStrength + scores.sitAndReach) * 7 / 4;
-                    let totalScore = parseFloat(academicScore) + parseFloat(practicalTotal);
+                    let totalScore = academicScore + practicalTotal;
 
                     document.getElementById('standingJumpRecord').textContent = standingJump.toFixed(2);
                     document.getElementById('weightedRunRecord').textContent = weightedRun.toFixed(2);
@@ -172,6 +172,8 @@
                     document.getElementById('totalScore').textContent = totalScore.toFixed(2);
                     document.getElementById('studentName').textContent = name;
                     document.getElementById('academyName').textContent = academy;
+
+                    saveDataToServer(formType, name, academy, gender, scores, academicScore, totalScore, practicalTotal);
                 } else if (formType === 'jeongsi') {
                     if (gender === 'male') {
                         scores.standingJump = calculateScore(standingJump, 254, 300, 'jeongsi');
@@ -185,8 +187,8 @@
                         scores.sitAndReach = calculateScore(sitAndReach, 13.9, 32, 'jeongsi');
                     }
 
-                    let practicalTotal = parseFloat(scores.standingJump) + parseFloat(scores.weightedRun) + parseFloat(scores.backStrength) + parseFloat(scores.sitAndReach);
-                    let totalScore = parseFloat(academicScore) + parseFloat(practicalTotal);
+                    let practicalTotal = scores.standingJump + scores.weightedRun + scores.backStrength + scores.sitAndReach;
+                    let totalScore = academicScore + practicalTotal;
 
                     document.getElementById('standingJumpRecord').textContent = standingJump.toFixed(2);
                     document.getElementById('weightedRunRecord').textContent = weightedRun.toFixed(2);
@@ -202,43 +204,43 @@
                     document.getElementById('totalScore').textContent = totalScore.toFixed(2);
                     document.getElementById('studentName').textContent = name;
                     document.getElementById('academyName').textContent = academy;
+
+                    saveDataToServer(formType, name, academy, gender, scores, academicScore, totalScore, practicalTotal);
                 }
 
                 // 입력 폼 숨기기
                 document.getElementById('inputFormContainer').style.display = 'none';
                 // 결과 표시
                 document.getElementById('result').style.display = 'block';
-
-                // 서버로 데이터 전송
-                const data = {
-                    name,
-                    academy,
-                    formType,
-                    gender,
-                    standingJump: standingJump.toFixed(2),
-                    standingJumpScore: scores.standingJump.toFixed(2),
-                    weightedRun: weightedRun.toFixed(2),
-                    weightedRunScore: scores.weightedRun.toFixed(2),
-                    backStrength: backStrength.toFixed(2),
-                    backStrengthScore: scores.backStrength.toFixed(2),
-                    sitAndReach: sitAndReach.toFixed(2),
-                    sitAndReachScore: scores.sitAndReach.toFixed(2),
-                    academicScore: academicScore.toFixed(2),
-                    totalScore: totalScore.toFixed(2),
-                    practicalTotal: practicalTotal.toFixed(2)
-                };
-
-                await fetch('http://yourserver.com/save-scores', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(data)
-                });
-
             } catch (error) {
                 alert("에러 발생: " + error.message);
             }
+        }
+
+        function saveDataToServer(formType, name, academy, gender, scores, academicScore, totalScore, practicalTotal) {
+            fetch('http://localhost:3000/save-data', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    formType: formType,
+                    name: name,
+                    academy: academy,
+                    gender: gender,
+                    scores: scores,
+                    academicScore: academicScore,
+                    totalScore: totalScore,
+                    practicalTotal: practicalTotal
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
         }
 
         function resetForm() {
