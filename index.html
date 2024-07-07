@@ -98,11 +98,11 @@
             document.getElementById('selection').style.display = 'none';
             document.getElementById('inputFormContainer').style.display = 'block';
             document.getElementById('formType').value = type;
-            document.getElementById('academicLabel').textContent = type === 'susi' ? '내신점수(300):' : '수능점수(600):';
+            document.getElementById('academicLabel').textContent = type === 'suji' ? '내신점수(300):' : '수능점수(600):';
         }
 
         function calculateScore(record, min, max, type) {
-            if (type === 'susi') {
+            if (type === 'suji') {
                 let score = (record - min) * (100 - 50) / (max - min) + 50;
                 return Math.max(0, Math.min(100, score));
             } else if (type === 'jeongsi') {
@@ -133,7 +133,7 @@
                 validateInput(weightedRun, "중량메고달리기");
                 validateInput(backStrength, "배근력");
                 validateInput(sitAndReach, "좌전굴");
-                validateInput(academicScore, formType === 'susi' ? '내신 점수' : '수능 점수');
+                validateInput(academicScore, formType === 'suji' ? '내신 점수' : '수능 점수');
 
                 let scores = {
                     standingJump: 0,
@@ -142,17 +142,17 @@
                     sitAndReach: 0
                 };
 
-                if (formType === 'susi') {
+                if (formType === 'suji') {
                     if (gender === 'male') {
-                        scores.standingJump = calculateScore(standingJump, 254, 300, 'susi');
-                        scores.weightedRun = calculateScore(weightedRun, 9.9, 7.19, 'susi');
-                        scores.backStrength = calculateScore(backStrength, 130, 220, 'susi');
-                        scores.sitAndReach = calculateScore(sitAndReach, 11.9, 30, 'susi');
+                        scores.standingJump = calculateScore(standingJump, 254, 300, 'suji');
+                        scores.weightedRun = calculateScore(weightedRun, 9.9, 7.19, 'suji');
+                        scores.backStrength = calculateScore(backStrength, 130, 220, 'suji');
+                        scores.sitAndReach = calculateScore(sitAndReach, 11.9, 30, 'suji');
                     } else {
-                        scores.standingJump = calculateScore(standingJump, 199, 250, 'susi');
-                        scores.weightedRun = calculateScore(weightedRun, 10.9, 7.6, 'susi');
-                        scores.backStrength = calculateScore(backStrength, 60, 151, 'susi');
-                        scores.sitAndReach = calculateScore(sitAndReach, 13.9, 32, 'susi');
+                        scores.standingJump = calculateScore(standingJump, 199, 250, 'suji');
+                        scores.weightedRun = calculateScore(weightedRun, 10.9, 7.6, 'suji');
+                        scores.backStrength = calculateScore(backStrength, 60, 151, 'suji');
+                        scores.sitAndReach = calculateScore(sitAndReach, 13.9, 32, 'suji');
                     }
 
                     let practicalTotal = (scores.standingJump + scores.weightedRun + scores.backStrength + scores.sitAndReach) * 7 / 4;
@@ -283,7 +283,7 @@
         <h2>점수변환 프로그램</h2>
 
         <div id="selection">
-            <button onclick="showForm('susi')">수시</button>
+            <button onclick="showForm('suji')">수시</button>
             <button onclick="showForm('jeongsi')">정시</button>
         </div>
 
