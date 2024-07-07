@@ -92,6 +92,28 @@
         .hidden {
             display: none;
         }
+
+        .result-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .result-table th,
+        .result-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+
+        .result-table th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+
+        .result-table td {
+            width: 50%;
+        }
     </style>
     <script>
         function showForm(type) {
@@ -287,7 +309,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>동국대학교 체육교육과</h2>
+        <h1>동국대학교 체육교육과</h1>
         <h2>점수변환 프로그램</h2>
 
         <div id="selection">
@@ -334,10 +356,37 @@
             <h3>결과</h3>
             <p class="bold"><span id="studentName"></span> 학생의 점수</p>
             <p>체대입시학원명: <span id="academyName"></span></p>
-            <p>배근력 기록: <span id="backStrengthRecord"></span>, 점수: <span id="backStrengthScore"></span></p>
-            <p>좌전굴 기록: <span id="sitAndReachRecord"></span>, 점수: <span id="sitAndReachScore"></span></p>
-            <p>제자리멀리뛰기 기록: <span id="standingJumpRecord"></span>, 점수: <span id="standingJumpScore"></span></p>
-            <p>중량메고달리기 기록: <span id="weightedRunRecord"></span>, 점수: <span id="weightedRunScore"></span></p>
+            <table class="result-table">
+                <thead>
+                    <tr>
+                        <th>종목</th>
+                        <th>기록</th>
+                        <th>점수</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>배근력</td>
+                        <td><span id="backStrengthRecord"></span></td>
+                        <td><span id="backStrengthScore"></span></td>
+                    </tr>
+                    <tr>
+                        <td>좌전굴</td>
+                        <td><span id="sitAndReachRecord"></span></td>
+                        <td><span id="sitAndReachScore"></span></td>
+                    </tr>
+                    <tr>
+                        <td>제자리멀리뛰기</td>
+                        <td><span id="standingJumpRecord"></span></td>
+                        <td><span id="standingJumpScore"></span></td>
+                    </tr>
+                    <tr>
+                        <td>중량메고달리기</td>
+                        <td><span id="weightedRunRecord"></span></td>
+                        <td><span id="weightedRunScore"></span></td>
+                    </tr>
+                </tbody>
+            </table>
             <p>수능/내신 점수: <span id="academicScoreResult"></span></p>
             <p>실기총점: <span id="practicalTotal"></span></p>
             <p class="total-score">총점: <span id="totalScore"></span></p>
