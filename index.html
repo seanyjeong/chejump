@@ -156,7 +156,7 @@
                     }
 
                     let practicalTotal = (scores.standingJump + scores.weightedRun + scores.backStrength + scores.sitAndReach) * 7 / 4;
-                    let totalScore = academicScore + practicalTotal;
+                    let totalScore = parseFloat(academicScore) + parseFloat(practicalTotal);
 
                     document.getElementById('standingJumpRecord').textContent = standingJump.toFixed(2);
                     document.getElementById('weightedRunRecord').textContent = weightedRun.toFixed(2);
@@ -185,8 +185,8 @@
                         scores.sitAndReach = calculateScore(sitAndReach, 13.9, 32, 'jeongsi');
                     }
 
-                    let practicalTotal = scores.standingJump + scores.weightedRun + scores.backStrength + scores.sitAndReach;
-                    let totalScore = academicScore + practicalTotal;
+                    let practicalTotal = parseFloat(scores.standingJump) + parseFloat(scores.weightedRun) + parseFloat(scores.backStrength) + parseFloat(scores.sitAndReach);
+                    let totalScore = parseFloat(academicScore) + parseFloat(practicalTotal);
 
                     document.getElementById('standingJumpRecord').textContent = standingJump.toFixed(2);
                     document.getElementById('weightedRunRecord').textContent = weightedRun.toFixed(2);
