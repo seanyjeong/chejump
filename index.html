@@ -111,9 +111,9 @@
             }
         }
 
-        function validateInput(value, name) {
-            if (isNaN(value) || value === "") {
-                throw new Error(name + " 기록을 정확하게 입력해주세요.");
+        function validateInput(value, name, min, max) {
+            if (isNaN(value) || value === "" || value < min || value > max) {
+                throw new Error(name + " 기록을 정확하게 입력해주세요. (범위: " + min + " ~ " + max + ")");
             }
         }
 
@@ -129,11 +129,19 @@
                 let sitAndReach = parseFloat(document.getElementById('sitAndReach').value);
                 let academicScore = parseFloat(document.getElementById('academicScore').value);
 
-                validateInput(standingJump, "제자리멀리뛰기");
-                validateInput(weightedRun, "중량메고달리기");
-                validateInput(backStrength, "배근력");
-                validateInput(sitAndReach, "좌전굴");
-                validateInput(academicScore, formType === 'suji' ? '내신 점수' : '수능 점수');
+                validateInput(standingJump, "제자리멀리뛰기", 0, 350);
+                validateInput(weightedRun, "중량메고달리기", 0, 20);
+                validateInput(backStrength, "배근력", 0, 300);
+                validateInput(sitAndReach, "좌전굴", 0, 40);
+                if (formType === 'suji') {
+                    if (academicScore < 0 || academicScore > 300) {
+                        throw new Error("내신 점수를 정확하게 입력해주세요. (범위: 0 ~ 300)");
+                    }
+                } else if (formType === 'jeongsi') {
+                    if (academicScore < 0 || academicScore > 600) {
+                        throw new Error("수능 점수를 정확하게 입력해주세요. (범위: 0 ~ 600)");
+                    }
+                }
 
                 let scores = {
                     standingJump: 0,
@@ -307,16 +315,16 @@
                 <input type="number" id="academicScore" name="academicScore">
                 <h3>실기종목</h3>
                 <label for="backStrength">배근력:</label>
-                <input type="number" id="backStrength" name="backStrength">
+                <input type="number" id="backStrength" name="backStrength" min="0" max="300">
                 <br>
                 <label for="sitAndReach">좌전굴:</label>
-                <input type="number" id="sitAndReach" name="sitAndReach">
+                <input type="number" id="sitAndReach" name="sitAndReach" min="0" max="40">
                 <br>
                 <label for="standingJump">제자리멀리뛰기:</label>
-                <input type="number" id="standingJump" name="standingJump">
+                <input type="number" id="standingJump" name="standingJump" min="0" max="350">
                 <br>
                 <label for="weightedRun">중량메고달리기:</label>
-                <input type="number" id="weightedRun" name="weightedRun">
+                <input type="number" id="weightedRun" name="weightedRun" min="0" max="20">
                 <br>
                 <button type="button" onclick="convertScores()">점수 변환하기</button>
             </form>
