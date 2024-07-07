@@ -306,17 +306,17 @@
                 <label id="academicLabel" for="academicScore">내신점수(300):</label>
                 <input type="number" id="academicScore" name="academicScore">
                 <h3>실기종목</h3>
-                <label for="standingJump">제자리멀리뛰기:</label>
-                <input type="number" id="standingJump" name="standingJump">
-                <br>
-                <label for="weightedRun">중량메고달리기:</label>
-                <input type="number" id="weightedRun" name="weightedRun">
-                <br>
                 <label for="backStrength">배근력:</label>
                 <input type="number" id="backStrength" name="backStrength">
                 <br>
                 <label for="sitAndReach">좌전굴:</label>
                 <input type="number" id="sitAndReach" name="sitAndReach">
+                <br>
+                <label for="standingJump">제자리멀리뛰기:</label>
+                <input type="number" id="standingJump" name="standingJump">
+                <br>
+                <label for="weightedRun">중량메고달리기:</label>
+                <input type="number" id="weightedRun" name="weightedRun">
                 <br>
                 <button type="button" onclick="convertScores()">점수 변환하기</button>
             </form>
@@ -326,10 +326,10 @@
             <h3>결과</h3>
             <p class="bold"><span id="studentName"></span> 학생의 점수</p>
             <p>체대입시학원명: <span id="academyName"></span></p>
-            <p>제자리멀리뛰기 기록: <span id="standingJumpRecord"></span>, 점수: <span id="standingJumpScore"></span></p>
-            <p>중량메고달리기 기록: <span id="weightedRunRecord"></span>, 점수: <span id="weightedRunScore"></span></p>
             <p>배근력 기록: <span id="backStrengthRecord"></span>, 점수: <span id="backStrengthScore"></span></p>
             <p>좌전굴 기록: <span id="sitAndReachRecord"></span>, 점수: <span id="sitAndReachScore"></span></p>
+            <p>제자리멀리뛰기 기록: <span id="standingJumpRecord"></span>, 점수: <span id="standingJumpScore"></span></p>
+            <p>중량메고달리기 기록: <span id="weightedRunRecord"></span>, 점수: <span id="weightedRunScore"></span></p>
             <p>수능/내신 점수: <span id="academicScoreResult"></span></p>
             <p>실기총점: <span id="practicalTotal"></span></p>
             <p class="total-score">총점: <span id="totalScore"></span></p>
