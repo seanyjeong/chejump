@@ -205,33 +205,7 @@
                 }
 
                 // 서버로 데이터 전송
-                let data = {
-                    name: name,
-                    academy: academy,
-                    formType: formType,
-                    gender: gender,
-                    standingJump: standingJump,
-                    weightedRun: weightedRun,
-                    backStrength: backStrength,
-                    sitAndReach: sitAndReach,
-                    academicScore: academicScore,
-                    totalScore: totalScore
-                };
-
-                fetch('https://supermax.kr/save-scores', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(data)
-                })
-                .then(response => response.json())
-                .then(result => {
-                    console.log('Success:', result);
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                });
+                
 
                 // 입력 폼 숨기기
                 document.getElementById('inputFormContainer').style.display = 'none';
