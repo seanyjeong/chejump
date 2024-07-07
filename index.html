@@ -205,7 +205,33 @@
                 }
 
                 // 서버로 데이터 전송
-                
+                const data = {
+                    name,
+                    academy,
+                    formType,
+                    gender,
+                    standingJump: standingJump.toFixed(2),
+                    weightedRun: weightedRun.toFixed(2),
+                    backStrength: backStrength.toFixed(2),
+                    sitAndReach: sitAndReach.toFixed(2),
+                    academicScore: academicScore.toFixed(2),
+                    totalScore: totalScore.toFixed(2)
+                };
+
+                fetch('http://your-server-ip:3000/save-duniv', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                })
+                .then(response => response.json())
+                .then(result => {
+                    console.log('Success:', result);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
 
                 // 입력 폼 숨기기
                 document.getElementById('inputFormContainer').style.display = 'none';
@@ -282,4 +308,4 @@
         </div>
     </div>
 </body>
-</html> 
+</html>
