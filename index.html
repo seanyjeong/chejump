@@ -114,6 +114,16 @@
         .result-table td {
             width: 50%;
         }
+
+        .privacy-container {
+            font-size: 0.9em;
+            margin-bottom: 15px;
+        }
+
+        .privacy-container input[type="checkbox"] {
+            width: auto;
+            margin-right: 5px;
+        }
     </style>
     <script>
         function showForm(type) {
@@ -141,6 +151,11 @@
 
         function convertScores() {
             try {
+                if (!document.getElementById('privacyCheck').checked) {
+                    alert("개인정보 활용에 동의해 주세요.");
+                    return;
+                }
+
                 let name = document.getElementById('name').value;
                 let academy = document.getElementById('academy').value;
                 let formType = document.getElementById('formType').value;
@@ -350,6 +365,10 @@
                 <label for="weightedRun">중량메고달리기:</label>
                 <input type="number" id="weightedRun" name="weightedRun" min="0" max="20">
                 <br>
+                <div class="privacy-container">
+                    <input type="checkbox" id="privacyCheck">
+                    <label for="privacyCheck">개인정보 활용에 동의합니다.</label>
+                </div>
                 <button type="button" onclick="convertScores()">점수 변환하기</button>
             </form>
         </div>
