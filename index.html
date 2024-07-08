@@ -139,167 +139,160 @@
             }
         }
 
-        function convertScores() {
-            try {
-                let name = document.getElementById('name').value;
-                let academy = document.getElementById('academy').value;
-                let formType = document.getElementById('formType').value;
-                let gender = document.querySelector('input[name="gender"]:checked').value;
-                let standingJump = parseFloat(document.getElementById('standingJump').value);
-                let weightedRun = parseFloat(document.getElementById('weightedRun').value);
-                let backStrength = parseFloat(document.getElementById('backStrength').value);
-                let sitAndReach = parseFloat(document.getElementById('sitAndReach').value);
-                let academicScore = parseFloat(document.getElementById('academicScore').value);
+    function convertScores() {
+        try {
+            let name = document.getElementById('name').value;
+            let academy = document.getElementById('academy').value;
+            let formType = document.getElementById('formType').value;
+            let gender = document.querySelector('input[name="gender"]:checked').value;
+            let standingJump = parseFloat(document.getElementById('standingJump').value);
+            let weightedRun = parseFloat(document.getElementById('weightedRun').value);
+            let backStrength = parseFloat(document.getElementById('backStrength').value);
+            let sitAndReach = parseFloat(document.getElementById('sitAndReach').value);
+            let academicScore = parseFloat(document.getElementById('academicScore').value);
 
-                validateInput(standingJump, "제자리멀리뛰기", 0, 350);
-                validateInput(weightedRun, "중량메고달리기", 0, 20);
-                validateInput(backStrength, "배근력", 0, 300);
-                validateInput(sitAndReach, "좌전굴", 0, 40);
-                if (formType === 'susi') {
-                    if (academicScore < 0 || academicScore > 300) {
-                        throw new Error("내신 점수를 정확하게 입력해주세요. (범위: 0 ~ 300)");
-                    }
-                } else if (formType === 'jeongsi') {
-                    if (academicScore < 0 || academicScore > 600) {
-                        throw new Error("수능 점수를 정확하게 입력해주세요. (범위: 0 ~ 600)");
-                    }
+            validateInput(standingJump, "제자리멀리뛰기", 0, 350);
+            validateInput(weightedRun, "중량메고달리기", 0, 20);
+            validateInput(backStrength, "배근력", 0, 300);
+            validateInput(sitAndReach, "좌전굴", 0, 40);
+            if (formType === 'susi') {
+                if (academicScore < 0 || academicScore > 300) {
+                    throw new Error("내신 점수를 정확하게 입력해주세요. (범위: 0 ~ 300)");
+                }
+            } else if (formType === 'jeongsi') {
+                if (academicScore < 0 || academicScore > 600) {
+                    throw new Error("수능 점수를 정확하게 입력해주세요. (범위: 0 ~ 600)");
+                }
+            }
+
+            let scores = {
+                standingJump: 0,
+                weightedRun: 0,
+                backStrength: 0,
+                sitAndReach: 0
+            };
+
+            if (formType === 'susi') {
+                if (gender === 'male') {
+                    scores.standingJump = calculateScore(standingJump, 254, 300, 'susi');
+                    scores.weightedRun = calculateScore(weightedRun, 9.9, 7.19, 'susi');
+                    scores.backStrength = calculateScore(backStrength, 130, 220, 'susi');
+                    scores.sitAndReach = calculateScore(sitAndReach, 11.9, 30, 'susi');
+                } else {
+                    scores.standingJump = calculateScore(standingJump, 199, 250, 'susi');
+                    scores.weightedRun = calculateScore(weightedRun, 10.9, 7.6, 'susi');
+                    scores.backStrength = calculateScore(backStrength, 60, 151, 'susi');
+                    scores.sitAndReach = calculateScore(sitAndReach, 13.9, 32, 'susi');
                 }
 
-                let scores = {
-                    standingJump: 0,
-                    weightedRun: 0,
-                    backStrength: 0,
-                    sitAndReach: 0
+                let practicalTotal = (scores.standingJump + scores.weightedRun + scores.backStrength + scores.sitAndReach) * 7 / 4;
+                let totalScore = academicScore + practicalTotal;
+
+                document.getElementById('standingJumpRecord').textContent = standingJump.toFixed(2);
+                document.getElementById('weightedRunRecord').textContent = weightedRun.toFixed(2);
+                document.getElementById('backStrengthRecord').textContent = backStrength.toFixed(2);
+                document.getElementById('sitAndReachRecord').textContent = sitAndReach.toFixed(2);
+
+                document.getElementById('standingJumpScore').textContent = scores.standingJump.toFixed(2);
+                document.getElementById('weightedRunScore').textContent = scores.weightedRun.toFixed(2);
+                document.getElementById('backStrengthScore').textContent = scores.backStrength.toFixed(2);
+                document.getElementById('sitAndReachScore').textContent = scores.sitAndReach.toFixed(2);
+                document.getElementById('academicScoreResult').textContent = academicScore.toFixed(2) + " (내신점수)";
+                document.getElementById('practicalTotal').textContent = practicalTotal.toFixed(2);
+                document.getElementById('totalScore').textContent = totalScore.toFixed(2);
+                document.getElementById('studentName').textContent = name;
+                document.getElementById('academyName').textContent = academy;
+
+                // 서버로 데이터 전송
+                const data = {
+                    name,
+                    academy,
+                    formType,
+                    gender,
+                    standingJump: standingJump.toFixed(2),
+                    weightedRun: weightedRun.toFixed(2),
+                    backStrength: backStrength.toFixed(2),
+                    sitAndReach: sitAndReach.toFixed(2),
+                    academicScore: academicScore.toFixed(2),
+                    practicalTotal: practicalTotal.toFixed(2),  // 실기총점 추가
+                    totalScore: totalScore.toFixed(2)
                 };
 
-                if (formType === 'susi') {
-                    if (gender === 'male') {
-                        scores.standingJump = calculateScore(standingJump, 254, 300, 'susi');
-                        scores.weightedRun = calculateScore(weightedRun, 9.9, 7.19, 'susi');
-                        scores.backStrength = calculateScore(backStrength, 130, 220, 'susi');
-                        scores.sitAndReach = calculateScore(sitAndReach, 11.9, 30, 'susi');
-                    } else {
-                        scores.standingJump = calculateScore(standingJump, 199, 250, 'susi');
-                        scores.weightedRun = calculateScore(weightedRun, 10.9, 7.6, 'susi');
-                        scores.backStrength = calculateScore(backStrength, 60, 151, 'susi');
-                        scores.sitAndReach = calculateScore(sitAndReach, 13.9, 32, 'susi');
-                    }
-
-                    let practicalTotal = (scores.standingJump + scores.weightedRun + scores.backStrength + scores.sitAndReach) * 7 / 4;
-                    let totalScore = academicScore + practicalTotal;
-
-                    document.getElementById('standingJumpRecord').textContent = standingJump.toFixed(2);
-                    document.getElementById('weightedRunRecord').textContent = weightedRun.toFixed(2);
-                    document.getElementById('backStrengthRecord').textContent = backStrength.toFixed(2);
-                    document.getElementById('sitAndReachRecord').textContent = sitAndReach.toFixed(2);
-
-                    document.getElementById('standingJumpScore').textContent = scores.standingJump.toFixed(2);
-                    document.getElementById('weightedRunScore').textContent = scores.weightedRun.toFixed(2);
-                    document.getElementById('backStrengthScore').textContent = scores.backStrength.toFixed(2);
-                    document.getElementById('sitAndReachScore').textContent = scores.sitAndReach.toFixed(2);
-                    document.getElementById('academicScoreResult').textContent = academicScore.toFixed(2) + " (내신점수)";
-                    document.getElementById('practicalTotal').textContent = practicalTotal.toFixed(2);
-                    document.getElementById('totalScore').textContent = totalScore.toFixed(2);
-                    document.getElementById('studentName').textContent = name;
-                    document.getElementById('academyName').textContent = academy;
-
-                    // 서버로 데이터 전송
-                    const data = {
-                        name,
-                        academy,
-                        formType,
-                        gender,
-                        standingJump: standingJump.toFixed(2),
-                        weightedRun: weightedRun.toFixed(2),
-                        backStrength: backStrength.toFixed(2),
-                        sitAndReach: sitAndReach.toFixed(2),
-                        academicScore: academicScore.toFixed(2),
-                        totalScore: totalScore.toFixed(2)
-                    };
-
-                    fetch('https://supermax.kr/save-duniv', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(data)
-                    })
-                    .then(response => response.json())
-                    .then(result => {
-                        console.log('Success:', result);
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                    });
-                } else if (formType === 'jeongsi') {
-                    if (gender === 'male') {
-                        scores.standingJump = calculateScore(standingJump, 254, 300, 'jeongsi');
-                        scores.weightedRun = calculateScore(weightedRun, 9.9, 7.19, 'jeongsi');
-                        scores.backStrength = calculateScore(backStrength, 130, 220, 'jeongsi');
-                        scores.sitAndReach = calculateScore(sitAndReach, 11.9, 30, 'jeongsi');
-                    } else {
-                        scores.standingJump = calculateScore(standingJump, 199, 250, 'jeongsi');
-                        scores.weightedRun = calculateScore(weightedRun, 10.9, 7.6, 'jeongsi');
-                        scores.backStrength = calculateScore(backStrength, 60, 151, 'jeongsi');
-                        scores.sitAndReach = calculateScore(sitAndReach, 13.9, 32, 'jeongsi');
-                    }
-
-                    let practicalTotal = scores.standingJump + scores.weightedRun + scores.backStrength + scores.sitAndReach;
-                    let totalScore = academicScore + practicalTotal;
-
-                    document.getElementById('standingJumpRecord').textContent = standingJump.toFixed(2);
-                    document.getElementById('weightedRunRecord').textContent = weightedRun.toFixed(2);
-                    document.getElementById('backStrengthRecord').textContent = backStrength.toFixed(2);
-                    document.getElementById('sitAndReachRecord').textContent = sitAndReach.toFixed(2);
-
-                    document.getElementById('standingJumpScore').textContent = scores.standingJump.toFixed(2);
-                    document.getElementById('weightedRunScore').textContent = scores.weightedRun.toFixed(2);
-                    document.getElementById('backStrengthScore').textContent = scores.backStrength.toFixed(2);
-                    document.getElementById('sitAndReachScore').textContent = scores.sitAndReach.toFixed(2);
-                    document.getElementById('academicScoreResult').textContent = academicScore.toFixed(2) + " (수능점수)";
-                    document.getElementById('practicalTotal').textContent = practicalTotal.toFixed(2);
-                    document.getElementById('totalScore').textContent = totalScore.toFixed(2);
-                    document.getElementById('studentName').textContent = name;
-                    document.getElementById('academyName').textContent = academy;
-
-                    // 서버로 데이터 전송
-                    const data = {
-                        name,
-                        academy,
-                        formType,
-                        gender,
-                        standingJump: standingJump.toFixed(2),
-                        weightedRun: weightedRun.toFixed(2),
-                        backStrength: backStrength.toFixed(2),
-                        sitAndReach: sitAndReach.toFixed(2),
-                        academicScore: academicScore.toFixed(2),
-                        totalScore: totalScore.toFixed(2)
-                    };
-
-                    fetch('https://supermax.kr/save-duniv', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(data)
-                    })
-                    .then(response => response.json())
-                    .then(result => {
-                        console.log('Success:', result);
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                    });
+                fetch('https://supermax.kr/save-duniv', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                })
+                .then(response => response.json())
+                .then(result => {
+                    console.log('Success:', result);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            } else if (formType === 'jeongsi') {
+                if (gender === 'male') {
+                    scores.standingJump = calculateScore(standingJump, 254, 300, 'jeongsi');
+                    scores.weightedRun = calculateScore(weightedRun, 9.9, 7.19, 'jeongsi');
+                    scores.backStrength = calculateScore(backStrength, 130, 220, 'jeongsi');
+                    scores.sitAndReach = calculateScore(sitAndReach, 11.9, 30, 'jeongsi');
+                } else {
+                    scores.standingJump = calculateScore(standingJump, 199, 250, 'jeongsi');
+                    scores.weightedRun = calculateScore(weightedRun, 10.9, 7.6, 'jeongsi');
+                    scores.backStrength = calculateScore(backStrength, 60, 151, 'jeongsi');
+                    scores.sitAndReach = calculateScore(sitAndReach, 13.9, 32, 'jeongsi');
                 }
 
-                // 입력 폼 숨기기
-                document.getElementById('inputFormContainer').style.display = 'none';
-                // 결과 표시
-                document.getElementById('result').style.display = 'block';
-            } catch (error) {
-                alert("에러 발생: " + error.message);
+                let practicalTotal = scores.standingJump + scores.weightedRun + scores.backStrength + scores.sitAndReach;
+                let totalScore = academicScore + practicalTotal;
+
+                document.getElementById('standingJumpRecord').textContent = standingJump.toFixed(2);
+                document.getElementById('weightedRunRecord').textContent = weightedRun.toFixed(2);
+                document.getElementById('backStrengthRecord').textContent = backStrength.toFixed(2);
+                document.getElementById('sitAndReachRecord').textContent = sitAndReach.toFixed(2);
+
+                document.getElementById('standingJumpScore').textContent = scores.standingJump.toFixed(2);
+                document.getElementById('weightedRunScore').textContent = scores.weightedRun.toFixed(2);
+                document.getElementById('backStrengthScore').textContent = scores.backStrength.toFixed(2);
+                document.getElementById('sitAndReachScore').textContent = scores.sitAndReach.toFixed(2);
+                document.getElementById('academicScoreResult').textContent = academicScore.toFixed(2) + " (수능점수)";
+                document.getElementById('practicalTotal').textContent = practicalTotal.toFixed(2);
+                document.getElementById('totalScore').textContent = totalScore.toFixed(2);
+                document.getElementById('studentName').textContent = name;
+                document.getElementById('academyName').textContent = academy;
+
+                // 서버로 데이터 전송
+                const data = {
+                    name,
+                    academy,
+                    formType,
+                    gender,
+                    standingJump: standingJump.toFixed(2),
+                    weightedRun: weightedRun.toFixed(2),
+                    backStrength: backStrength.toFixed(2),
+                    sitAndReach: sitAndReach.toFixed(2),
+                    academicScore: academicScore.toFixed(2),
+                    practicalTotal: practicalTotal.toFixed(2),  // 실기총점 추가
+                    totalScore: totalScore.toFixed(2)
+                };
+
+                fetch('https://supermax.kr/save-duniv', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                })
+                .then(response => response.json())
+                .then(result => {
+                    console.log('Success:', result);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
             }
-        }
 
         function resetForm() {
             // 페이지 새로고침
