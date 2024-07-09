@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>한양대학교(ERICA) 체육교육과 점수변환 프로그램</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f4f4f9;
+            box-sizing: border-box;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 400px;
+            box-sizing: border-box;
+        }
+
+        h1, h2 {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .form-container {
+            display: none;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="radio"],
+        button {
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .gender-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .gender-container input[type="radio"] {
+            width: auto;
+            margin-left: 10px;
+            margin-right: 5px;
+        }
+
+        .result {
+            display: none;
+            text-align: center;
+        }
+
+        .result p {
+            margin: 10px 0;
+        }
+
+        .result .bold {
+            font-weight: bold;
+        }
+
+        .result .total-score {
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .result-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .result-table th,
+        .result-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+
+        .result-table th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+
+        .result-table td {
+            width: 50%;
+        }
+
+        .privacy-container {
+            font-size: 0.9em;
+            margin-bottom: 15px;
+        }
+
+        .privacy-container input[type="checkbox"] {
+            width: auto;
+            margin-right: 5px;
+        }
+    </style>
+    <script>
+        const scoreTable = {
+            susi: {
+                male: {
+                    standingJump: [
+                        {record: 1, score: 107.5}, {record: 210, score: 115}, {record: 215, score: 122.5}, {record: 220, score: 130},
+                        {record: 225, score: 137.5}, {record: 230, score: 145}, {record: 235, score: 152.5},
+                        {record: 240, score: 160}, {record: 245, score: 167.5}, {record: 250, score: 175},
+                        {record: 255, score: 182.5}, {record: 260, score: 190}, {record: 265, score: 197.5},
+                        {record: 270, score: 205}, {record: 275, score: 212.5}, {record: 280, score: 220},
+                        {record: 285, score: 227.5}, {record: 290, score: 235}, {record: 295, score: 242.5},
+                        {record: 300, score: 250}
+                    ],
+                    medicineBall: [
+                        {record: 1, score: 107.5}, {record: 5.4, score: 115}, {record: 5.8, score: 122.5}, {record: 6.2, score: 130},
+                        {record: 6.6, score: 137.5}, {record: 7.0, score: 145}, {record: 7.4, score: 152.5},
+                        {record: 7.8, score: 160}, {record: 8.2, score: 167.5}, {record: 8.6, score: 175},
+                        {record: 9.0, score: 182.5}, {record: 9.4, score: 190}, {record: 9.8, score: 197.5},
+                        {record: 10.2, score: 205}, {record: 10.6, score: 212.5}, {record: 11.0, score: 220},
+                        {record: 11.4, score: 227.5}, {record: 11.8, score: 235}, {record: 12.2, score: 242.5},
+                        {record: 12.6, score: 250}
+                    ],
+                    tenMeterRun: [
+                        {record: 1, score: 250}, {record: 8.51, score: 242.5}, {record: 8.61, score: 235},
+                        {record: 8.71, score: 227.5}, {record: 8.81, score: 220}, {record: 8.91, score: 212.5},
+                        {record: 9.01, score: 205}, {record: 9.11, score: 197.5}, {record: 9.21, score: 190},
+                        {record: 9.31, score: 182.5}, {record: 9.41, score: 175}, {record: 9.51, score: 167.5},
+                        {record: 9.61, score: 160}, {record: 9.71, score: 152.5}, {record: 9.81, score: 145},
+                        {record: 9.91, score: 137.5}, {record: 10.01, score: 130}, {record: 10.11, score: 122.5},
+                        {record: 10.21, score: 115}, {record: 10.31, score: 107.5}
+                    ],
+                    twentyFiveMeterRun: [
+                        {record: 1, score: 250}, {record: 37.01, score: 242.5}, {record: 38.01, score: 235},
+                        {record: 39.01, score: 227.5}, {record: 40.01, score: 220}, {record: 41.01, score: 212.5},
+                        {record: 42.01, score: 205}, {record: 43.01, score: 197.5}, {record: 44.01, score: 190},
+                        {record: 45.01, score: 182.5}, {record: 46.01, score: 175}, {record: 47.01, score: 167.5},
+                        {record: 48.01, score: 160}, {record: 49.01, score: 152.5}, {record: 50.01, score: 145},
+                        {record: 51.01, score: 137.5}, {record: 52.01, score: 130}, {record: 53.01, score: 122.5},
+                        {record: 54.01, score: 115}, {record: 55.01, score: 107.5}
+                    ]
+                },
+                female: {
+                    standingJump: [
+                        {record: 1, score: 107.5}, {record: 160, score: 115}, {record: 165, score: 122.5}, {record: 170, score: 130},
+                        {record: 175, score: 137.5}, {record: 180, score: 145}, {record: 185, score: 152.5},
+                        {record: 190, score: 160}, {record: 195, score: 167.5}, {record: 200, score: 175},
+                        {record: 205, score: 182.5}, {record: 210, score: 190}, {record: 215, score: 197.5},
+                        {record: 220, score: 205}, {record: 225, score: 212.5}, {record: 230, score: 220},
+                        {record: 235, score: 227.5}, {record: 240, score: 235}, {record: 245, score: 242.5},
+                        {record: 250, score: 250}
+                    ],
+                    medicineBall: [
+                        {record: 1, score: 107.5}, {record: 2.6, score: 115}, {record: 3.0, score: 122.5}, {record: 3.4, score: 130},
+                        {record: 3.8, score: 137.5}, {record: 4.2, score: 145}, {record: 4.6, score: 152.5},
+                        {record: 5.0, score: 160}, {record: 5.4, score: 167.5}, {record: 5.8, score: 175},
+                        {record: 6.2, score: 182.5}, {record: 6.6, score: 190}, {record: 7.0, score: 197.5},
+                        {record: 7.4, score: 205}, {record: 7.8, score: 212.5}, {record: 8.2, score: 220},
+                        {record: 8.6, score: 227.5}, {record: 9.0, score: 235}, {record: 9.4, score: 242.5},
+                        {record: 9.8, score: 250}
+                    ],
+                    tenMeterRun: [
+                        {record: 1, score: 250}, {record: 9.11, score: 242.5}, {record: 9.21, score: 235},
+                        {record: 9.31, score: 227.5}, {record: 9.41, score: 220}, {record: 9.51, score: 212.5},
+                        {record: 9.61, score: 205}, {record: 9.71, score: 197.5}, {record: 9.81, score: 190},
+                        {record: 9.91, score: 182.5}, {record: 10.01, score: 175}, {record: 10.11, score: 167.5},
+                        {record: 10.21, score: 160}, {record: 10.31, score: 152.5}, {record: 10.41, score: 145},
+                        {record: 10.51, score: 137.5}, {record: 10.61, score: 130}, {record: 10.71, score: 122.5},
+                        {record: 10.81, score: 115}, {record: 10.91, score: 107.5}
+                    ],
+                    twentyFiveMeterRun: [
+                        {record: 1, score: 250}, {record: 44.01, score: 242.5}, {record: 45.01, score: 235},
+                        {record: 46.01, score: 227.5}, {record: 47.01, score: 220}, {record: 48.01, score: 212.5},
+                        {record: 49.01, score: 205}, {record: 50.01, score: 197.5}, {record: 51.01, score: 190},
+                        {record: 52.01, score: 182.5}, {record: 53.01, score: 175}, {record: 54.01, score: 167.5},
+                        {record: 55.01, score: 160}, {record: 56.01, score: 152.5}, {record: 57.01, score: 145},
+                        {record: 58.01, score: 137.5}, {record: 59.01, score: 130}, {record: 60.01, score: 122.5},
+                        {record: 61.01, score: 115}, {record: 62.01, score: 107.5}
+                    ]
+                }
+            },
+            jeongsi: {
+                male: {
+                    standingJump: [
+                        {record: 1, score: 32.25}, {record: 210, score: 34.5}, {record: 215, score: 36.75}, {record: 220, score: 39},
+                        {record: 225, score: 41.25}, {record: 230, score: 43.5}, {record: 235, score: 45.75},
+                        {record: 240, score: 48}, {record: 245, score: 50.25}, {record: 250, score: 52.5},
+                        {record: 255, score: 54.75}, {record: 260, score: 57}, {record: 265, score: 59.25},
+                        {record: 270, score: 61.5}, {record: 275, score: 63.75}, {record: 280, score: 66},
+                        {record: 285, score: 68.25}, {record: 290, score: 70.5}, {record: 295, score: 72.75},
+                        {record: 300, score: 75}
+                    ],
+                    medicineBall: [
+                        {record: 1, score: 32.25}, {record: 5.4, score: 34.5}, {record: 5.8, score: 36.75}, {record: 6.2, score: 39},
+                        {record: 6.6, score: 41.25}, {record: 7.0, score: 43.5}, {record: 7.4, score: 45.75},
+                        {record: 7.8, score: 48}, {record: 8.2, score: 50.25}, {record: 8.6, score: 52.5},
+                        {record: 9.0, score: 54.75}, {record: 9.4, score: 57}, {record: 9.8, score: 59.25},
+                        {record: 10.2, score: 61.5}, {record: 10.6, score: 63.75}, {record: 11.0, score: 66},
+                        {record: 11.4, score: 68.25}, {record: 11.8, score: 70.5}, {record: 12.2, score: 72.75},
+                        {record: 12.6, score: 75}
+                    ],
+                    tenMeterRun: [
+                        {record: 1, score: 75}, {record: 8.51, score: 72.75}, {record: 8.61, score: 70.5},
+                        {record: 8.71, score: 68.25}, {record: 8.81, score: 66}, {record: 8.91, score: 63.75},
+                        {record: 9.01, score: 61.5}, {record: 9.11, score: 59.25}, {record: 9.21, score: 57},
+                        {record: 9.31, score: 54.75}, {record: 9.41, score: 52.5}, {record: 9.51, score: 50.25},
+                        {record: 9.61, score: 48}, {record: 9.71, score: 45.75}, {record: 9.81, score: 43.5},
+                        {record: 9.91, score: 41.25}, {record: 10.01, score: 39}, {record: 10.11, score: 36.75},
+                        {record: 10.21, score: 34.5}, {record: 10.31, score: 32.25}
+                    ],
+                    twentyFiveMeterRun: [
+                        {record: 1, score: 75}, {record: 37.01, score: 72.75}, {record: 38.01, score: 70.5},
+                        {record: 39.01, score: 68.25}, {record: 40.01, score: 66}, {record: 41.01, score: 63.75},
+                        {record: 42.01, score: 61.5}, {record: 43.01, score: 59.25}, {record: 44.01, score: 57},
+                        {record: 45.01, score: 54.75}, {record: 46.01, score: 52.5}, {record: 47.01, score: 50.25},
+                        {record: 48.01, score: 48}, {record: 49.01, score: 45.75}, {record: 50.01, score: 43.5},
+                        {record: 51.01, score: 41.25}, {record: 52.01, score: 39}, {record: 53.01, score: 36.75},
+                        {record: 54.01, score: 34.5}, {record: 55.01, score: 32.25}
+                    ]
+                },
+                female: {
+                    standingJump: [
+                        {record: 1, score: 32.25}, {record: 160, score: 34.5}, {record: 165, score: 36.75}, {record: 170, score: 39},
+                        {record: 175, score: 41.25}, {record: 180, score: 43.5}, {record: 185, score: 45.75},
+                        {record: 190, score: 48}, {record: 195, score: 50.25}, {record: 200, score: 52.5},
+                        {record: 205, score: 54.75}, {record: 210, score: 57}, {record: 215, score: 59.25},
+                        {record: 220, score: 61.5}, {record: 225, score: 63.75}, {record: 230, score: 66},
+                        {record: 235, score: 68.25}, {record: 240, score: 70.5}, {record: 245, score: 72.75},
+                        {record: 250, score: 75}
+                    ],
+                    medicineBall: [
+                        {record: 1, score: 32.25}, {record: 2.6, score: 34.5}, {record: 3.0, score: 36.75}, {record: 3.4, score: 39},
+                        {record: 3.8, score: 41.25}, {record: 4.2, score: 43.5}, {record: 4.6, score: 45.75},
+                        {record: 5.0, score: 48}, {record: 5.4, score: 50.25}, {record: 5.8, score: 52.5},
+                        {record: 6.2, score: 54.75}, {record: 6.6, score: 57}, {record: 7.0, score: 59.25},
+                        {record: 7.4, score: 61.5}, {record: 7.8, score: 63.75}, {record: 8.2, score: 66},
+                        {record: 8.6, score: 68.25}, {record: 9.0, score: 70.5}, {record: 9.4, score: 72.75},
+                        {record: 9.8, score: 75}
+                    ],
+                    tenMeterRun: [
+                        {record: 1, score: 75}, {record: 9.11, score: 72.75}, {record: 9.21, score: 70.5},
+                        {record: 9.31, score: 68.25}, {record: 9.41, score: 66}, {record: 9.51, score: 63.75},
+                        {record: 9.61, score: 61.5}, {record: 9.71, score: 59.25}, {record: 9.81, score: 57},
+                        {record: 9.91, score: 54.75}, {record: 10.01, score: 52.5}, {record: 10.11, score: 50.25},
+                        {record: 10.21, score: 48}, {record: 10.31, score: 45.75}, {record: 10.41, score: 43.5},
+                        {record: 10.51, score: 41.25}, {record: 10.61, score: 39}, {record: 10.71, score: 36.75},
+                        {record: 10.81, score: 34.5}, {record: 10.91, score: 32.25}
+                    ],
+                    twentyFiveMeterRun: [
+                        {record: 1, score: 75}, {record: 44.01, score: 72.75}, {record: 45.01, score: 70.5},
+                        {record: 46.01, score: 68.25}, {record: 47.01, score: 66}, {record: 48.01, score: 63.75},
+                        {record: 49.01, score: 61.5}, {record: 50.01, score: 59.25}, {record: 51.01, score: 57},
+                        {record: 52.01, score: 54.75}, {record: 53.01, score: 52.5}, {record: 54.01, score: 50.25},
+                        {record: 55.01, score: 48}, {record: 56.01, score: 45.75}, {record: 57.01, score: 43.5},
+                        {record: 58.01, score: 41.25}, {record: 59.01, score: 39}, {record: 60.01, score: 36.75},
+                        {record: 61.01, score: 34.5}, {record: 62.01, score: 32.25}
+                    ]
+                }
+            }
+        };
+
+        function showForm(type) {
+            document.getElementById('selection').style.display = 'none';
+            document.getElementById('inputFormContainer').style.display = 'block';
+            document.getElementById('formType').value = type;
+            if (type === 'jeongsi') {
+                document.getElementById('suengLabel').style.display = 'block';
+                document.getElementById('suengInput').style.display = 'block';
+            } else {
+                document.getElementById('suengLabel').style.display = 'none';
+                document.getElementById('suengInput').style.display = 'none';
+            }
+        }
+
+        function calculateScore(value, records) {
+            for (let i = records.length - 1; i >= 0; i--) {
+                if (value >= records[i].record) {
+                    return records[i].score;
+                }
+            }
+            return records[0].score;
+        }
+
+        function convertScores() {
+            try {
+                if (!document.getElementById('privacyCheck').checked) {
+                    alert("개인정보 활용에 동의해 주세요.");
+                    return;
+                }
+
+                let name = document.getElementById('name').value;
+                let academy = document.getElementById('academy').value;
+                let formType = document.getElementById('formType').value;
+                let gender = document.querySelector('input[name="gender"]:checked').value;
+                let standingJump = parseFloat(document.getElementById('standingJump').value);
+                let medicineBall = parseFloat(document.getElementById('medicineBall').value);
+                let tenMeterRun = parseFloat(document.getElementById('tenMeterRun').value);
+                let twentyFiveMeterRun = parseFloat(document.getElementById('twentyFiveMeterRun').value);
+                let suengScore = formType === 'jeongsi' ? parseFloat(document.getElementById('suengInput').value) : 0;
+
+                validateInput(standingJump, "제자리멀리뛰기", 0, 350);
+                validateInput(medicineBall, "메디신볼던지기", 0, 20);
+                validateInput(tenMeterRun, "10m 왕복달리기", 0, 20);
+                validateInput(twentyFiveMeterRun, "25m 왕복달리기", 0, 60);
+                if (formType === 'jeongsi') {
+                    validateInput(suengScore, "수능점수", 0, 700);
+                }
+
+                let scores = {
+                    standingJump: calculateScore(standingJump, scoreTable[formType][gender].standingJump),
+                    medicineBall: calculateScore(medicineBall, scoreTable[formType][gender].medicineBall),
+                    tenMeterRun: calculateScore(tenMeterRun, scoreTable[formType][gender].tenMeterRun),
+                    twentyFiveMeterRun: calculateScore(twentyFiveMeterRun, scoreTable[formType][gender].twentyFiveMeterRun)
+                };
+
+                let practicalScore = scores.standingJump + scores.medicineBall + scores.tenMeterRun + scores.twentyFiveMeterRun;
+                let totalScore = practicalScore + suengScore;
+
+                document.getElementById('standingJumpRecord').textContent = standingJump.toFixed(2);
+                document.getElementById('medicineBallRecord').textContent = medicineBall.toFixed(2);
+                document.getElementById('tenMeterRunRecord').textContent = tenMeterRun.toFixed(2);
+                document.getElementById('twentyFiveMeterRunRecord').textContent = twentyFiveMeterRun.toFixed(2);
+
+                document.getElementById('standingJumpScore').textContent = scores.standingJump.toFixed(2);
+                document.getElementById('medicineBallScore').textContent = scores.medicineBall.toFixed(2);
+                document.getElementById('tenMeterRunScore').textContent = scores.tenMeterRun.toFixed(2);
+                document.getElementById('twentyFiveMeterRunScore').textContent = scores.twentyFiveMeterRun.toFixed(2);
+                document.getElementById('totalScore').textContent = totalScore.toFixed(2);
+                document.getElementById('studentName').textContent = name;
+                document.getElementById('academyName').textContent = academy;
+
+                document.getElementById('practicalScore').textContent = practicalScore.toFixed(2);
+                document.getElementById('suengScoreResult').textContent = suengScore.toFixed(2);
+
+                if (formType === 'jeongsi') {
+                    document.getElementById('suengScoreSection').style.display = 'block';
+                    document.getElementById('practicalScoreSection').style.display = 'block';
+                } else {
+                    document.getElementById('suengScoreSection').style.display = 'none';
+                    document.getElementById('practicalScoreSection').style.display = 'none';
+                }
+
+                // 서버로 데이터 전송
+                const data = {
+                    name,
+                    academy,
+                    formType,
+                    gender,
+                    standingJump: standingJump.toFixed(2),
+                    medicineBall: medicineBall.toFixed(2),
+                    tenMeterRun: tenMeterRun.toFixed(2),
+                    twentyFiveMeterRun: twentyFiveMeterRun.toFixed(2),
+                    practicalScore: practicalScore.toFixed(2),
+                    totalScore: totalScore.toFixed(2),
+                    suengScore: formType === 'jeongsi' ? suengScore.toFixed(2) : null
+                };
+
+                const endpoint = formType === 'susi' ? 'https://supermax.kr/save-ERICA-susi' : 'https://supermax.kr/save-ERICA-jeongsi';
+
+                fetch(endpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                })
+                .then(response => response.json())
+                .then(result => {
+                    console.log('Success:', result);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+
+                // 입력 폼 숨기기
+                document.getElementById('inputFormContainer').style.display = 'none';
+                // 결과 표시
+                document.getElementById('result').style.display = 'block';
+            } catch (error) {
+                alert("에러 발생: " + error.message);
+            }
+        }
+
+        function validateInput(value, name, min, max) {
+            if (isNaN(value) || value === "" || value < min || value > max) {
+                throw new Error(name + " 기록을 정확하게 입력해주세요. (범위: " + min + " ~ " + max + ")");
+            }
+        }
+
+        function resetForm() {
+            // 페이지 새로고침
+            location.reload();
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>한양대학교(ERICA) 체육교육과</h1>
+        <h2>점수변환 프로그램</h2>
+
+        <div id="selection">
+            <button onclick="showForm('susi')">수시</button>
+            <button onclick="showForm('jeongsi')">정시</button>
+        </div>
+
+        <div id="inputFormContainer" class="form-container">
+            <form id="inputForm">
+                <input type="hidden" id="formType" name="formType">
+                <label for="name">이름:</label>
+                <input type="text" id="name" name="name">
+                <label for="year">학년:</label>
+                <input type="text" id="year" name="year">
+                <label for="academy">체대입시학원명:</label>
+                <input type="text" id="academy" name="academy">
+                <div class="gender-container">
+                    <label for="gender">성별:</label>
+                    <input type="radio" id="male" name="gender" value="male">
+                    <label for="male">남자</label>
+                    <input type="radio" id="female" name="gender" value="female">
+                    <label for="female">여자</label>
+                </div>
+                <label id="suengLabel" for="suengInput" style="display:none;">수능점수(700):</label>
+                <input type="number" id="suengInput" name="suengScore" min="0" max="700" style="display:none;">
+                <h3>실기종목</h3>
+                <label for="standingJump">제자리멀리뛰기:</label>
+                <input type="number" id="standingJump" name="standingJump" min="0" max="350">
+                <br>
+                <label for="medicineBall">메디신볼던지기:</label>
+                <input type="number" id="medicineBall" name="medicineBall" min="0" max="20">
+                <br>
+                <label for="tenMeterRun">10m 왕복달리기:</label>
+                <input type="number" id="tenMeterRun" name="tenMeterRun" min="0" max="20">
+                <br>
+                <label for="twentyFiveMeterRun">25m 왕복달리기:</label>
+                <input type="number" id="twentyFiveMeterRun" name="twentyFiveMeterRun" min="0" max="60">
+                <br>
+                <div class="privacy-container">
+                    <input type="checkbox" id="privacyCheck">
+                    <label for="privacyCheck">개인정보 활용에 동의합니다.</label>
+                </div>
+                <button type="button" onclick="convertScores()">점수 변환하기</button>
+            </form>
+        </div>
+
+        <div id="result" class="result">
+            <h3>결과</h3>
+            <p class="bold"><span id="studentName"></span> 학생의 점수</p>
+            <p>체대입시학원명: <span id="academyName"></span></p>
+            <table class="result-table">
+                <thead>
+                    <tr>
+                        <th>종목</th>
+                        <th>기록</th>
+                        <th>점수</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>제자리멀리뛰기</td>
+                        <td><span id="standingJumpRecord"></span></td>
+                        <td><span id="standingJumpScore"></span></td>
+                    </tr>
+                    <tr>
+                        <td>메디신볼던지기</td>
+                        <td><span id="medicineBallRecord"></span></td>
+                        <td><span id="medicineBallScore"></span></td>
+                    </tr>
+                    <tr>
+                        <td>10m 왕복달리기</td>
+                        <td><span id="tenMeterRunRecord"></span></td>
+                        <td><span id="tenMeterRunScore"></span></td>
+                    </tr>
+                    <tr>
+                        <td>25m 왕복달리기</td>
+                        <td><span id="twentyFiveMeterRunRecord"></span></td>
+                        <td><span id="twentyFiveMeterRunScore"></span></td>
+                    </tr>
+                </tbody>
+            </table>
+            <div id="suengScoreSection" style="display:none;">
+                <p class="bold">수능점수: <span id="suengScoreResult"></span></p>
+            </div>
+            <div id="practicalScoreSection" style="display:none;">
+                <p class="bold">실기총점: <span id="practicalScore"></span></p>
+            </div>
+            <p class="total-score">총점: <span id="totalScore"></span></p>
+            <button onclick="resetForm()">재입력</button>
+        </div>
+    </div>
+</body>
+</html>
