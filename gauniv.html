@@ -256,13 +256,12 @@
                 let practicalScore = scores.strength + scores.medicineBall + scores.standingJump + scores.tenMeterRun;
                 let totalScore = practicalScore + schoolScore;
 
-                document.getElementById('schoolScoreRecord').textContent = schoolScore.toFixed(2);
+                document.getElementById('schoolScoreDisplay').textContent = schoolScore.toFixed(2);
                 document.getElementById('strengthRecord').textContent = strength.toFixed(2);
                 document.getElementById('medicineBallRecord').textContent = medicineBall.toFixed(2);
                 document.getElementById('standingJumpRecord').textContent = standingJump.toFixed(2);
                 document.getElementById('tenMeterRunRecord').textContent = tenMeterRun.toFixed(2);
 
-                document.getElementById('schoolScore').textContent = schoolScore.toFixed(2);
                 document.getElementById('strengthScore').textContent = scores.strength.toFixed(2);
                 document.getElementById('medicineBallScore').textContent = scores.medicineBall.toFixed(2);
                 document.getElementById('standingJumpScore').textContent = scores.standingJump.toFixed(2);
@@ -389,11 +388,6 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td>내신점수</td>
-                        <td><span id="schoolScoreRecord"></span></td>
-                        <td><span id="schoolScore"></span></td>
-                    </tr>
-                    <tr>
                         <td>배근력</td>
                         <td><span id="strengthRecord"></span></td>
                         <td><span id="strengthScore"></span></td>
@@ -415,9 +409,8 @@
                     </tr>
                 </tbody>
             </table>
-            <div id="practicalScoreSection">
-                <p class="bold">실기총점: <span id="practicalScore"></span></p>
-            </div>
+            <p class="bold">내신점수: <span id="schoolScoreDisplay"></span></p>
+            <p class="bold">실기총점: <span id="practicalScore"></span></p>
             <p class="total-score">총점: <span id="totalScore"></span></p>
             <button onclick="resetForm()">재입력</button>
         </div>
