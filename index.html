@@ -38,7 +38,7 @@
             font-size: 1em;
             border: none;
             border-radius: 5px;
-            background-color: #007BFF;
+            background-color: #383636;
             color: #fff;
             cursor: pointer;
             transition: background-color 0.3s;
@@ -46,17 +46,49 @@
         }
 
         button:hover {
-            background-color: #0056b3;
+            background-color: #648daf;
+        }
+
+        .ad-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .ad-box {
+            width: 48%;
+            height: 100px;
+            background-color: #e0e0e0;
+            border: 1px dashed #ccc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 10px;
+            font-size: 0.9em;
+            color: #555;
         }
     </style>
 </head>
 <body>
     <div class="container">
+        <h2 style="color: red;">채점 말고 체JUMP! 하자!</h2>
         <h1>체대입시 점수계산<br>프로그램</h1>
+        <p>합격가능성은 참고용으로만 활용해주세요</p>
+        
         <button onclick="location.href='duniv.html'">동국대학교(서울)</button>
         <button onclick="location.href='huniv.html'">한양대학교(ERICA)</button>
         <button onclick="location.href='gauniv.html'">가천대학교</button>
-        <button onclick="alert('페이지가 아직 준비되지 않았습니다.')">한국체육대학교(사체)</button>
+        <button onclick="alert('커밍순! 조금만 기다려주세요!')">한국체육대학교(사체)</button>
+        
+        <div class="ad-container">
+            <div class="ad-box">광고문의</div>
+            <div class="ad-box">광고문의</div>
+            <div class="ad-box">광고문의</div>
+            <div class="ad-box">광고문의</div>
+            <div class="ad-box">광고문의</div>
+            <div class="ad-box">광고문의</div>
+        </div>
     </div>
 </body>
 </html>
