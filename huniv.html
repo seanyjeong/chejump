@@ -284,7 +284,6 @@
                 }
             }
         };
-
         function showForm(type) {
             document.getElementById('selection').style.display = 'none';
             document.getElementById('inputFormContainer').style.display = 'block';
@@ -305,6 +304,28 @@
                 }
             }
             return records[0].score;
+        }
+
+        function calculateAdmissionProbability(score, formType) {
+            let probability = 0;
+            if (formType === 'susi') {
+                if (score >= 960) {
+                    probability = 100;
+                } else if (score <= 900) {
+                    probability = 19;
+                } else {
+                    probability = (score - 900) * (100 - 19) / (960 - 900) + 19;
+                }
+            } else if (score >= 900) { // formType is 'jeongsi'
+                if (score >= 900) {
+                    probability = 100;
+                } else if (score <= 860) {
+                    probability = 10;
+                } else {
+                    probability = (score - 860) * (100 - 10) / (900 - 860) + 10;
+                }
+            }
+            return probability.toFixed(2);
         }
 
         function convertScores() {
@@ -365,6 +386,9 @@
                     document.getElementById('suengScoreSection').style.display = 'none';
                     document.getElementById('practicalScoreSection').style.display = 'none';
                 }
+
+                let admissionProbability = calculateAdmissionProbability(totalScore, formType);
+                document.getElementById('admissionProbability').textContent = admissionProbability + "%";
 
                 // 서버로 데이터 전송
                 const data = {
@@ -510,8 +534,10 @@
                 <p class="bold">실기총점: <span id="practicalScore"></span></p>
             </div>
             <p class="total-score">총점: <span id="totalScore"></span></p>
+            <p class="total-score">합격 가능성: <span id="admissionProbability"></span></p>
             <button onclick="resetForm()">재입력</button>
         </div>
     </div>
 </body>
 </html>
+
