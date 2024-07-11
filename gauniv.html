@@ -234,6 +234,19 @@ tenMeterRun: [
             return records[0].score;
         }
 
+        function calculateAdmissionProbability(totalScore) {
+            const minScore = 950;
+            const maxScore = 990;
+            const minProbability = 0.00;
+            const maxProbability = 93.00;
+
+            if (totalScore <= minScore) return minProbability.toFixed(2);
+            if (totalScore >= maxScore) return maxProbability.toFixed(2);
+
+            const probability = ((totalScore - minScore) / (maxScore - minScore)) * (maxProbability - minProbability) + minProbability;
+            return Math.max(Math.min(probability, 100.00), 10.00).toFixed(2);
+        }
+
         function convertScores() {
             try {
                 if (!document.getElementById('privacyCheck').checked) {
@@ -267,6 +280,7 @@ tenMeterRun: [
 
                 let practicalScore = scores.strength + scores.medicineBall + scores.standingJump + scores.tenMeterRun;
                 let totalScore = practicalScore + schoolScore;
+                let admissionProbability = calculateAdmissionProbability(totalScore);
 
                 document.getElementById('schoolScoreDisplay').textContent = schoolScore.toFixed(2);
                 document.getElementById('strengthRecord').textContent = strength.toFixed(2);
@@ -283,6 +297,7 @@ tenMeterRun: [
                 document.getElementById('academyName').textContent = academy;
 
                 document.getElementById('practicalScore').textContent = practicalScore.toFixed(2);
+                document.getElementById('admissionProbability').textContent = admissionProbability + "%";
 
                 // 서버로 데이터 전송
                 const data = {
@@ -424,6 +439,7 @@ tenMeterRun: [
             <p class="bold">내신점수: <span id="schoolScoreDisplay"></span></p>
             <p class="bold">실기총점: <span id="practicalScore"></span></p>
             <p class="total-score">총점: <span id="totalScore"></span></p>
+            <p class="bold">합격 가능성: <span id="admissionProbability"></span></p>
             <button onclick="resetForm()">재입력</button>
         </div>
     </div>
