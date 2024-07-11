@@ -143,6 +143,28 @@
             }
         }
 
+        function calculateAdmissionProbability(totalScore, formType) {
+            let minScore, maxScore, minProbability, maxProbability;
+
+            if (formType === 'susi') {
+                minScore = 940;
+                maxScore = 998;
+                minProbability = 10;
+                maxProbability = 100;
+            } else if (formType === 'jeongsi') {
+                minScore = 705;
+                maxScore = 760;
+                minProbability = 10;
+                maxProbability = 100;
+            }
+
+            if (totalScore <= minScore) return minProbability.toFixed(2);
+            if (totalScore >= maxScore) return maxProbability.toFixed(2);
+
+            const probability = ((totalScore - minScore) / (maxScore - minScore)) * (maxProbability - minProbability) + minProbability;
+            return Math.max(Math.min(probability, 100.00), 10.00).toFixed(2);
+        }
+
         function validateInput(value, name, min, max) {
             if (isNaN(value) || value === "" || value < min || value > max) {
                 throw new Error(name + " 기록을 정확하게 입력해주세요. (범위: " + min + " ~ " + max + ")");
@@ -202,6 +224,7 @@
 
                     let practicalTotal = (scores.standingJump + scores.weightedRun + scores.backStrength + scores.sitAndReach) * 7 / 4;
                     let totalScore = academicScore + practicalTotal;
+                    let admissionProbability = calculateAdmissionProbability(totalScore, formType);
 
                     document.getElementById('standingJumpRecord').textContent = standingJump.toFixed(2);
                     document.getElementById('weightedRunRecord').textContent = weightedRun.toFixed(2);
@@ -215,6 +238,7 @@
                     document.getElementById('academicScoreResult').textContent = academicScore.toFixed(2) + " (내신점수)";
                     document.getElementById('practicalTotal').textContent = practicalTotal.toFixed(2);
                     document.getElementById('totalScore').textContent = totalScore.toFixed(2);
+                    document.getElementById('admissionProbability').textContent = admissionProbability + "%";
                     document.getElementById('studentName').textContent = name;
                     document.getElementById('academyName').textContent = academy;
 
@@ -262,6 +286,7 @@
 
                     let practicalTotal = scores.standingJump + scores.weightedRun + scores.backStrength + scores.sitAndReach;
                     let totalScore = academicScore + practicalTotal;
+                    let admissionProbability = calculateAdmissionProbability(totalScore, formType);
 
                     document.getElementById('standingJumpRecord').textContent = standingJump.toFixed(2);
                     document.getElementById('weightedRunRecord').textContent = weightedRun.toFixed(2);
@@ -275,6 +300,7 @@
                     document.getElementById('academicScoreResult').textContent = academicScore.toFixed(2) + " (수능점수)";
                     document.getElementById('practicalTotal').textContent = practicalTotal.toFixed(2);
                     document.getElementById('totalScore').textContent = totalScore.toFixed(2);
+                    document.getElementById('admissionProbability').textContent = admissionProbability + "%";
                     document.getElementById('studentName').textContent = name;
                     document.getElementById('academyName').textContent = academy;
 
@@ -411,6 +437,7 @@
             <p>수능/내신 점수: <span id="academicScoreResult"></span></p>
             <p>실기총점: <span id="practicalTotal"></span></p>
             <p class="total-score">총점: <span id="totalScore"></span></p>
+            <p class="bold">합격 가능성: <span id="admissionProbability"></span></p>
             <button onclick="resetForm()">재입력</button>
         </div>
     </div>
