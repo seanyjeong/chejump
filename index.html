@@ -67,6 +67,24 @@
             margin-bottom: 10px;
             font-size: 0.9em;
             color: #555;
+            position: relative;
+        }
+
+        .ad-box img {
+            max-width: 100%;
+            max-height: 100%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .ad-contact {
+            width: 100%;
+            text-align: center;
+            cursor: pointer;
+            color: blue;
+            text-decoration: underline;
         }
     </style>
     <script>
@@ -79,6 +97,14 @@
             } catch (error) {
                 console.error('Failed to fetch user count:', error);
             }
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert('이메일 주소가 복사되었습니다: ' + text);
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+            });
         }
 
         window.onload = fetchUserCount;
@@ -96,11 +122,11 @@
 
         
         <div class="ad-container">
-            <div class="ad-box">광고</div>
-            <div class="ad-box">광고</div>
-            <div class="ad-box">광고</div>
-            <div class="ad-box">광고</div>
-            <p>광고문의: univchejump@gmail.com </p>
+            <div class="ad-box"><img src="ad1.jpg" alt="광고 문의"></div>
+            <div class="ad-box"><img src="ad2.jpg" alt="광고 문의"></div>
+            <div class="ad-box"><img src="ad3.jpg" alt="광고 문의"></div>
+            <div class="ad-box"><img src="ad4.jpg" alt="광고 문의"></div>
+            <p class="ad-contact" onclick="copyToClipboard('univchejump@gmail.com')">광고 및 기타 문의: univchejump@gmail.com</p>
         </div>
     </div>
 </body>
