@@ -158,6 +158,12 @@
         document.getElementById('studentSchool').textContent = data.학교;
 
         // 선택 과목명 설정
+        document.querySelector('th[for="국어선택과목"]').textContent = data.국어선택과목 || '-';
+        document.querySelector('th[for="수학선택과목"]').textContent = data.수학선택과목 || '-';
+        document.querySelector('th[for="탐구1선택과목"]').textContent = data.탐구1선택과목 || '-';
+        document.querySelector('th[for="탐구2선택과목"]').textContent = data.탐구2선택과목 || '-';
+
+        // 점수, 백분위, 등급 설정
         document.getElementById('국어표준점수').textContent = data.국어표준점수 || '-';
         document.getElementById('수학표준점수').textContent = data.수학표준점수 || '-';
         document.getElementById('영어표준점수').textContent = data.영어표준점수 || '-';
@@ -178,12 +184,6 @@
         document.getElementById('탐구1등급').textContent = data.탐구1등급 || '-';
         document.getElementById('탐구2등급').textContent = data.탐구2등급 || '-';
         document.getElementById('한국사등급').textContent = data.한국사등급 || '-';
-
-        // 선택 과목 이름 표시
-        document.querySelector('th[for="국어선택과목"]').textContent = data.국어선택과목 || '-';
-        document.querySelector('th[for="수학선택과목"]').textContent = data.수학선택과목 || '-';
-        document.querySelector('th[for="탐구1선택과목"]').textContent = data.탐구1선택과목 || '-';
-        document.querySelector('th[for="탐구2선택과목"]').textContent = data.탐구2선택과목 || '-';
       })
       .catch(error => {
         console.error('성적표 불러오기 오류:', error.message);
