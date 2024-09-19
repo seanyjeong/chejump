@@ -9,7 +9,7 @@
       font-family: Arial, sans-serif;
       margin: 20px;
     }
-    h1 {
+    h1, h2, h3 {
       color: #2c3e50;
     }
     label, select, button {
@@ -21,22 +21,40 @@
       border-collapse: collapse;
       margin-top: 20px;
     }
-    table, th, td {
-      border: 1px solid #dddddd;
-    }
     th, td {
       padding: 8px;
       text-align: left;
     }
     th {
+      background-color: #3498db;
+      color: white;
+    }
+    tr:nth-child(even) {
       background-color: #f2f2f2;
     }
-    #studentInfo {
-      margin-top: 20px;
+    tr:hover {
+      background-color: #d3eaf7;
+    }
+
+    /* 성적표 테이블 스타일 추가 */
+    #studentScoreTable th, #studentScoreTable td {
       padding: 10px;
-      background-color: #f9f9f9;
-      border: 1px solid #ccc;
-      border-radius: 5px;
+      border: 1px solid #dddddd;
+      text-align: center;
+    }
+
+    #studentScoreTable th {
+      background-color: #3498db;
+      color: white;
+      font-weight: bold;
+    }
+
+    #studentScoreTable tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+
+    #studentScoreTable tr:hover {
+      background-color: #d3eaf7;
     }
   </style>
 </head>
@@ -49,10 +67,19 @@
   </select>
 
   <h2>학생 성적표</h2>
-  <div id="studentInfo">
-    <p>학생 이름을 선택하면 성적표가 표시됩니다.</p>
-  </div>
+  <table id="studentScoreTable">
+    <thead>
+      <tr>
+        <th>과목</th>
+        <th>표준점수</th>
+        <th>백분위</th>
+        <th>등급</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
 
+  <h2>계산 결과</h2>
   <table id="scoreTable">
     <thead>
       <tr>
@@ -81,61 +108,49 @@
 
         // 학생이 선택되었을 때 이벤트 설정
         studentSelect.addEventListener('change', () => {
-          fetchStudentInfo();
-          fetchAllSchoolScores();
+          const studentName = studentSelect.value;
+          if (studentName) {
+            fetchStudentInfo(studentName); // 성적표 불러오기
+            fetchAllSchoolScores(studentName); // 계산 결과 불러오기
+          }
         });
       });
 
-    // 선택된 학생의 성적표를 불러오는 함수
-    function fetchStudentInfo() {
-      const studentName = document.getElementById('studentSelect').value;
-
-      if (!studentName) {
-        document.getElementById('studentInfo').innerHTML = '<p>학생 이름을 선택해주세요.</p>';
-        return;
-      }
-
-      // API 호출: 선택된 학생의 성적표 가져오기
+    // 학생 성적 정보 불러오기
+    function fetchStudentInfo(studentName) {
       fetch(`https://supermax.kr/api/student-info/${studentName}`)
         .then(response => response.json())
         .then(data => {
-          const studentInfoDiv = document.getElementById('studentInfo');
-          studentInfoDiv.innerHTML = `
-            <h3>${data.이름}의 성적표</h3>
-            <table>
-              <tr><th>국어 선택 과목</th><td>${data.국어선택과목}</td></tr>
-              <tr><th>국어 표준점수</th><td>${data.국어표준점수}</td></tr>
-              <tr><th>국어 백분위</th><td>${data.국어백분위}</td></tr>
-              <tr><th>수학 선택 과목</th><td>${data.수학선택과목}</td></tr>
-              <tr><th>수학 표준점수</th><td>${data.수학표준점수}</td></tr>
-              <tr><th>수학 백분위</th><td>${data.수학백분위}</td></tr>
-              <tr><th>영어 등급</th><td>${data.영어등급}</td></tr>
-              <tr><th>탐구1 선택 과목</th><td>${data.탐구1선택과목}</td></tr>
-              <tr><th>탐구1 표준점수</th><td>${data.탐구1표준점수}</td></tr>
-              <tr><th>탐구1 백분위</th><td>${data.탐구1백분위}</td></tr>
-              <tr><th>탐구2 선택 과목</th><td>${data.탐구2선택과목}</td></tr>
-              <tr><th>탐구2 표준점수</th><td>${data.탐구2표준점수}</td></tr>
-              <tr><th>탐구2 백분위</th><td>${data.탐구2백분위}</td></tr>
-              <tr><th>한국사 등급</th><td>${data.한국사등급}</td></tr>
-            </table>
-          `;
+          const scoreTableBody = document.querySelector('#studentScoreTable tbody');
+          scoreTableBody.innerHTML = ''; // 기존 데이터를 지우고 새로 추가
+
+          const subjects = [
+            { name: '국어', stdScore: data.국어표준점수, percentile: data.국어백분위, grade: data.국어등급 },
+            { name: '수학', stdScore: data.수학표준점수, percentile: data.수학백분위, grade: data.수학등급 },
+            { name: '영어', stdScore: '-', percentile: '-', grade: data.영어등급 },
+            { name: '탐구1', stdScore: data.탐구1표준점수, percentile: data.탐구1백분위, grade: data.탐구1등급 },
+            { name: '탐구2', stdScore: data.탐구2표준점수, percentile: data.탐구2백분위, grade: data.탐구2등급 },
+            { name: '한국사', stdScore: '-', percentile: '-', grade: data.한국사등급 }
+          ];
+
+          subjects.forEach(subject => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td>${subject.name}</td>
+              <td>${subject.stdScore}</td>
+              <td>${subject.percentile}</td>
+              <td>${subject.grade}</td>
+            `;
+            scoreTableBody.appendChild(row);
+          });
         })
         .catch(error => {
           console.error('성적표 불러오기 오류:', error);
-          document.getElementById('studentInfo').innerHTML = '<p>성적표를 불러오는 중 오류가 발생했습니다.</p>';
         });
     }
 
     // 모든 학교에 대한 점수 계산 요청
-    function fetchAllSchoolScores() {
-      const studentName = document.getElementById('studentSelect').value;
-
-      if (!studentName) {
-        document.getElementById('result').textContent = '학생 이름을 선택해주세요.';
-        return;
-      }
-
-      // API 호출: 선택된 학생의 모든 학교에 대한 점수 계산
+    function fetchAllSchoolScores(studentName) {
       fetch('https://supermax.kr/api/calculate-all-scores', {
         method: 'POST',
         headers: {
