@@ -101,7 +101,7 @@
         const studentSelect = document.getElementById('studentSelect');
         data.forEach(student => {
           const option = document.createElement('option');
-          option.value = student.이름;
+          option.value = student.이름;  // id 대신 이름 사용
           option.textContent = student.이름;
           studentSelect.appendChild(option);
         });
@@ -116,9 +116,9 @@
         });
       });
 
-    // 학생 성적 정보 불러오기
+    // 학생 성적 정보 불러오기 (이름 기반)
     function fetchStudentInfo(studentName) {
-      fetch(`https://supermax.kr/api/student-info/${studentName}`)
+      fetch(`https://supermax.kr/api/student-info/${encodeURIComponent(studentName)}`)
         .then(response => response.json())
         .then(data => {
           const scoreTableBody = document.querySelector('#studentScoreTable tbody');
