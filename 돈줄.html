@@ -20,6 +20,7 @@
       width: 100%;
       border-collapse: collapse;
       margin-top: 20px;
+      text-align: center;
     }
     th, td {
       padding: 8px;
@@ -96,31 +97,37 @@
     <thead>
       <tr>
         <th colspan="2" class="name">이름</th>
+        <td colspan="2" id="studentName">-</td> <!-- 이름 표시 -->
         <th class="dob">생년월일</th>
+        <td colspan="2" id="studentDob">-</td> <!-- 생년월일 표시 -->
         <th class="gender">성별</th>
-        <th colspan="5" class="school">학교명</th>
+        <td id="studentGender">-</td> <!-- 성별 표시 -->
+        <th class="school">학교명</th>
+        <td colspan="3" id="studentSchool">-</td> <!-- 학교명 표시 -->
       </tr>
       <tr>
         <th>한국사 영역</th>
         <th>국어 영역</th>
         <th>수학 영역</th>
         <th>영어 영역</th>
-        <th colspan="3">사회탐구 영역</th>
+        <th colspan="2">탐구1</th>
+        <th colspan="2">탐구2</th>
         <th colspan="2">제2외국어 / 한문 영역</th>
       </tr>
       <tr>
-        <th></th>
-        <th></th>
-        <th></th>
-        <th></th>
-        <th>생활과 윤리</th>
-        <th>사회·문화</th>
-        <th>독일어 I</th>
+        <th>등급</th>
+        <th>점수</th>
+        <th>등급</th>
+        <th>점수</th>
+        <th>과목명</th>
+        <th>점수</th>
+        <th>과목명</th>
+        <th>점수</th>
+        <th>과목명</th>
+        <th>점수</th>
       </tr>
     </thead>
-    <tbody>
-      <!-- 성적 데이터가 여기에 채워집니다 -->
-    </tbody>
+    <tbody></tbody>
   </table>
 
   <h2>계산 결과</h2>
@@ -174,30 +181,28 @@
         const scoreTableBody = document.querySelector('#studentScoreTable tbody');
         scoreTableBody.innerHTML = ''; // 기존 데이터를 지우고 새로 추가
 
+        // 학생 정보 표시
+        document.getElementById('studentName').textContent = data.이름;
+        document.getElementById('studentDob').textContent = data.생년월일;
+        document.getElementById('studentGender').textContent = data.성별;
+        document.getElementById('studentSchool').textContent = data.학교명;
+
         // 동적으로 학생 정보를 테이블에 채우기
-        const row1 = `
+        const row = `
           <tr>
-            <td rowspan="2" class="diagonal"><span>${data.한국사등급}</span></td>
-            <td>${data.국어표준점수}</td>
-            <td>${data.수학표준점수}</td>
-            <td rowspan="2" class="diagonal"><span>${data.영어등급}</span></td>
-            <td>${data.탐구1표준점수}</td>
-            <td>${data.탐구2표준점수}</td>
-            <td>${data.제2외국어표준점수 || '-'}</td>
+            <td>${data.한국사등급}</td>
+            <td>${data.한국사점수 || '-'}</td>
+            <td>${data.국어등급}</td>
+            <td>${data.국어점수 || '-'}</td>
+            <td>${data.탐구1과목 || '-'}</td>
+            <td>${data.탐구1점수 || '-'}</td>
+            <td>${data.탐구2과목 || '-'}</td>
+            <td>${data.탐구2점수 || '-'}</td>
+            <td>${data.제2외국어과목 || '-'}</td>
+            <td>${data.제2외국어점수 || '-'}</td>
           </tr>
         `;
-
-        const row2 = `
-          <tr>
-            <td>${data.국어백분위}</td>
-            <td>${data.수학백분위}</td>
-            <td>${data.탐구1백분위}</td>
-            <td>${data.탐구2백분위}</td>
-            <td>${data.제2외국어백분위 || '-'}</td>
-          </tr>
-        `;
-
-        scoreTableBody.innerHTML += row1 + row2;
+        scoreTableBody.innerHTML += row;
       })
       .catch(error => {
         console.error('성적표 불러오기 오류:', error.message);
