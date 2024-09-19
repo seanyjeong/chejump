@@ -24,7 +24,7 @@
     }
     th, td {
       padding: 8px;
-      text-align: left;
+      border: 1px solid #dddddd;
     }
     th {
       background-color: #3498db;
@@ -36,48 +36,7 @@
     tr:hover {
       background-color: #d3eaf7;
     }
-
-    /* 성적표 테이블 스타일 추가 */
-    #studentScoreTable th, #studentScoreTable td {
-      padding: 10px;
-      border: 1px solid #dddddd;
-      text-align: center;
-    }
-
-    #studentScoreTable th {
-      background-color: #3498db;
-      color: white;
-      font-weight: bold;
-    }
-
-    #studentScoreTable tr:nth-child(even) {
-      background-color: #f2f2f2;
-    }
-
-    #studentScoreTable tr:hover {
-      background-color: #d3eaf7;
-    }
-    
-    .diagonal {
-      position: relative;
-      height: 50px;
-    }
-    .diagonal::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: white;
-      clip-path: polygon(0% 0%, 100% 0%, 0% 100%);
-    }
-    .diagonal span {
-      position: absolute;
-      top: 5px;
-      right: 5px;
-    }
-    .name, .dob, .gender, .school {
+    .name, .gender, .school {
       text-align: left;
       padding-left: 10px;
       font-weight: bold;
@@ -96,35 +55,48 @@
   <table id="studentScoreTable">
     <thead>
       <tr>
-        <th colspan="2" class="name">이름</th>
-        <td colspan="2" id="studentName">-</td> <!-- 이름 표시 -->
-        <th class="dob">생년월일</th>
-        <td colspan="2" id="studentDob">-</td> <!-- 생년월일 표시 -->
+        <th class="name">이름</th>
+        <td id="studentName">-</td> <!-- 이름 표시 -->
         <th class="gender">성별</th>
         <td id="studentGender">-</td> <!-- 성별 표시 -->
         <th class="school">학교명</th>
         <td colspan="3" id="studentSchool">-</td> <!-- 학교명 표시 -->
       </tr>
       <tr>
-        <th>한국사 영역</th>
-        <th>국어 영역</th>
-        <th>수학 영역</th>
-        <th>영어 영역</th>
-        <th colspan="2">탐구1</th>
-        <th colspan="2">탐구2</th>
-        <th colspan="2">제2외국어 / 한문 영역</th>
+        <th>과목명</th>
+        <th>국어</th>
+        <th>수학</th>
+        <th>영어</th>
+        <th>탐구1</th>
+        <th>탐구2</th>
+        <th>제2외국어 / 한문</th>
+      </tr>
+      <tr>
+        <th>표준점수</th>
+        <td id="국어표준점수">-</td>
+        <td id="수학표준점수">-</td>
+        <td id="영어표준점수">-</td>
+        <td id="탐구1표준점수">-</td>
+        <td id="탐구2표준점수">-</td>
+        <td id="제2외국어표준점수">-</td>
+      </tr>
+      <tr>
+        <th>백분위</th>
+        <td id="국어백분위">-</td>
+        <td id="수학백분위">-</td>
+        <td id="영어백분위">-</td>
+        <td id="탐구1백분위">-</td>
+        <td id="탐구2백분위">-</td>
+        <td id="제2외국어백분위">-</td>
       </tr>
       <tr>
         <th>등급</th>
-        <th>점수</th>
-        <th>등급</th>
-        <th>점수</th>
-        <th>과목명</th>
-        <th>점수</th>
-        <th>과목명</th>
-        <th>점수</th>
-        <th>과목명</th>
-        <th>점수</th>
+        <td id="국어등급">-</td>
+        <td id="수학등급">-</td>
+        <td id="영어등급">-</td>
+        <td id="탐구1등급">-</td>
+        <td id="탐구2등급">-</td>
+        <td id="제2외국어등급">-</td>
       </tr>
     </thead>
     <tbody></tbody>
@@ -178,31 +150,32 @@
       })
       .then(response => response.json())
       .then(data => {
-        const scoreTableBody = document.querySelector('#studentScoreTable tbody');
-        scoreTableBody.innerHTML = ''; // 기존 데이터를 지우고 새로 추가
-
         // 학생 정보 표시
         document.getElementById('studentName').textContent = data.이름;
-        document.getElementById('studentDob').textContent = data.생년월일;
         document.getElementById('studentGender').textContent = data.성별;
         document.getElementById('studentSchool').textContent = data.학교명;
 
-        // 동적으로 학생 정보를 테이블에 채우기
-        const row = `
-          <tr>
-            <td>${data.한국사등급}</td>
-            <td>${data.한국사점수 || '-'}</td>
-            <td>${data.국어등급}</td>
-            <td>${data.국어점수 || '-'}</td>
-            <td>${data.탐구1과목 || '-'}</td>
-            <td>${data.탐구1점수 || '-'}</td>
-            <td>${data.탐구2과목 || '-'}</td>
-            <td>${data.탐구2점수 || '-'}</td>
-            <td>${data.제2외국어과목 || '-'}</td>
-            <td>${data.제2외국어점수 || '-'}</td>
-          </tr>
-        `;
-        scoreTableBody.innerHTML += row;
+        // 과목별 표준점수, 백분위, 등급 설정
+        document.getElementById('국어표준점수').textContent = data.국어표준점수 || '-';
+        document.getElementById('수학표준점수').textContent = data.수학표준점수 || '-';
+        document.getElementById('영어표준점수').textContent = data.영어표준점수 || '-';
+        document.getElementById('탐구1표준점수').textContent = data.탐구1표준점수 || '-';
+        document.getElementById('탐구2표준점수').textContent = data.탐구2표준점수 || '-';
+        document.getElementById('제2외국어표준점수').textContent = data.제2외국어표준점수 || '-';
+
+        document.getElementById('국어백분위').textContent = data.국어백분위 || '-';
+        document.getElementById('수학백분위').textContent = data.수학백분위 || '-';
+        document.getElementById('영어백분위').textContent = data.영어백분위 || '-';
+        document.getElementById('탐구1백분위').textContent = data.탐구1백분위 || '-';
+        document.getElementById('탐구2백분위').textContent = data.탐구2백분위 || '-';
+        document.getElementById('제2외국어백분위').textContent = data.제2외국어백분위 || '-';
+
+        document.getElementById('국어등급').textContent = data.국어등급 || '-';
+        document.getElementById('수학등급').textContent = data.수학등급 || '-';
+        document.getElementById('영어등급').textContent = data.영어등급 || '-';
+        document.getElementById('탐구1등급').textContent = data.탐구1등급 || '-';
+        document.getElementById('탐구2등급').textContent = data.탐구2등급 || '-';
+        document.getElementById('제2외국어등급').textContent = data.제2외국어등급 || '-';
       })
       .catch(error => {
         console.error('성적표 불러오기 오류:', error.message);
