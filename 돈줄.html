@@ -116,38 +116,44 @@
         });
       });
 
-    // 학생 성적 정보 불러오기 (이름 기반)
-    function fetchStudentInfo(studentName) {
-      fetch(`https://supermax.kr/api/student-info/${encodeURIComponent(studentName)}`)
-        .then(response => response.json())
-        .then(data => {
-          const scoreTableBody = document.querySelector('#studentScoreTable tbody');
-          scoreTableBody.innerHTML = ''; // 기존 데이터를 지우고 새로 추가
+// 학생 성적 정보 불러오기 (이름 기반, 인코딩 제거)
+function fetchStudentInfo(studentName) {
+  fetch(`https://supermax.kr/api/student-info/${studentName}`)  // URL 인코딩 없이 보냄
+    .then(response => {
+      if (!response.ok) {  // 404 에러 처리
+        throw new Error(`학생 정보를 찾을 수 없습니다: ${response.status}`);
+      }
+      return response.json();
+    })
+    .then(data => {
+      const scoreTableBody = document.querySelector('#studentScoreTable tbody');
+      scoreTableBody.innerHTML = ''; // 기존 데이터를 지우고 새로 추가
 
-          const subjects = [
-            { name: '국어', stdScore: data.국어표준점수, percentile: data.국어백분위, grade: data.국어등급 },
-            { name: '수학', stdScore: data.수학표준점수, percentile: data.수학백분위, grade: data.수학등급 },
-            { name: '영어', stdScore: '-', percentile: '-', grade: data.영어등급 },
-            { name: '탐구1', stdScore: data.탐구1표준점수, percentile: data.탐구1백분위, grade: data.탐구1등급 },
-            { name: '탐구2', stdScore: data.탐구2표준점수, percentile: data.탐구2백분위, grade: data.탐구2등급 },
-            { name: '한국사', stdScore: '-', percentile: '-', grade: data.한국사등급 }
-          ];
+      const subjects = [
+        { name: '국어', stdScore: data.국어표준점수, percentile: data.국어백분위, grade: data.국어등급 },
+        { name: '수학', stdScore: data.수학표준점수, percentile: data.수학백분위, grade: data.수학등급 },
+        { name: '영어', stdScore: '-', percentile: '-', grade: data.영어등급 },
+        { name: '탐구1', stdScore: data.탐구1표준점수, percentile: data.탐구1백분위, grade: data.탐구1등급 },
+        { name: '탐구2', stdScore: data.탐구2표준점수, percentile: data.탐구2백분위, grade: data.탐구2등급 },
+        { name: '한국사', stdScore: '-', percentile: '-', grade: data.한국사등급 }
+      ];
 
-          subjects.forEach(subject => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-              <td>${subject.name}</td>
-              <td>${subject.stdScore}</td>
-              <td>${subject.percentile}</td>
-              <td>${subject.grade}</td>
-            `;
-            scoreTableBody.appendChild(row);
-          });
-        })
-        .catch(error => {
-          console.error('성적표 불러오기 오류:', error);
-        });
-    }
+      subjects.forEach(subject => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${subject.name}</td>
+          <td>${subject.stdScore}</td>
+          <td>${subject.percentile}</td>
+          <td>${subject.grade}</td>
+        `;
+        scoreTableBody.appendChild(row);
+      });
+    })
+    .catch(error => {
+      console.error('성적표 불러오기 오류:', error.message);
+    });
+}
+
 
     // 모든 학교에 대한 점수 계산 요청
     function fetchAllSchoolScores(studentName) {
