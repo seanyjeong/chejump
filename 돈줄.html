@@ -31,6 +31,13 @@
     th {
       background-color: #f2f2f2;
     }
+    #studentInfo {
+      margin-top: 20px;
+      padding: 10px;
+      background-color: #f9f9f9;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
   </style>
 </head>
 <body>
@@ -41,8 +48,10 @@
     <option value="">학생을 선택해주세요</option> <!-- 기본 선택 안내 옵션 -->
   </select>
 
-  <h2>계산 결과</h2>
-  <p id="result">학생 이름을 선택하면 해당 학생의 점수가 표시됩니다.</p>
+  <h2>학생 성적표</h2>
+  <div id="studentInfo">
+    <p>학생 이름을 선택하면 성적표가 표시됩니다.</p>
+  </div>
 
   <table id="scoreTable">
     <thead>
@@ -71,14 +80,56 @@
         });
 
         // 학생이 선택되었을 때 이벤트 설정
-        studentSelect.addEventListener('change', fetchAllSchoolScores);
+        studentSelect.addEventListener('change', () => {
+          fetchStudentInfo();
+          fetchAllSchoolScores();
+        });
       });
+
+    // 선택된 학생의 성적표를 불러오는 함수
+    function fetchStudentInfo() {
+      const studentName = document.getElementById('studentSelect').value;
+
+      if (!studentName) {
+        document.getElementById('studentInfo').innerHTML = '<p>학생 이름을 선택해주세요.</p>';
+        return;
+      }
+
+      // API 호출: 선택된 학생의 성적표 가져오기
+      fetch(`https://supermax.kr/api/student-info/${studentName}`)
+        .then(response => response.json())
+        .then(data => {
+          const studentInfoDiv = document.getElementById('studentInfo');
+          studentInfoDiv.innerHTML = `
+            <h3>${data.이름}의 성적표</h3>
+            <table>
+              <tr><th>국어 선택 과목</th><td>${data.국어선택과목}</td></tr>
+              <tr><th>국어 표준점수</th><td>${data.국어표준점수}</td></tr>
+              <tr><th>국어 백분위</th><td>${data.국어백분위}</td></tr>
+              <tr><th>수학 선택 과목</th><td>${data.수학선택과목}</td></tr>
+              <tr><th>수학 표준점수</th><td>${data.수학표준점수}</td></tr>
+              <tr><th>수학 백분위</th><td>${data.수학백분위}</td></tr>
+              <tr><th>영어 등급</th><td>${data.영어등급}</td></tr>
+              <tr><th>탐구1 선택 과목</th><td>${data.탐구1선택과목}</td></tr>
+              <tr><th>탐구1 표준점수</th><td>${data.탐구1표준점수}</td></tr>
+              <tr><th>탐구1 백분위</th><td>${data.탐구1백분위}</td></tr>
+              <tr><th>탐구2 선택 과목</th><td>${data.탐구2선택과목}</td></tr>
+              <tr><th>탐구2 표준점수</th><td>${data.탐구2표준점수}</td></tr>
+              <tr><th>탐구2 백분위</th><td>${data.탐구2백분위}</td></tr>
+              <tr><th>한국사 등급</th><td>${data.한국사등급}</td></tr>
+            </table>
+          `;
+        })
+        .catch(error => {
+          console.error('성적표 불러오기 오류:', error);
+          document.getElementById('studentInfo').innerHTML = '<p>성적표를 불러오는 중 오류가 발생했습니다.</p>';
+        });
+    }
 
     // 모든 학교에 대한 점수 계산 요청
     function fetchAllSchoolScores() {
       const studentName = document.getElementById('studentSelect').value;
 
-      // 학생이 선택되지 않았을 때는 실행하지 않음
       if (!studentName) {
         document.getElementById('result').textContent = '학생 이름을 선택해주세요.';
         return;
