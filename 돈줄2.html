@@ -25,6 +25,7 @@
   <table id="scoresTable" style="display: none;">
     <thead>
       <tr id="studentNamesRow">
+        <th>군</th>
         <th>학교명</th>
         <th>전공</th>
         <!-- 학생 이름들이 여기에 추가될 것입니다. -->
@@ -44,7 +45,7 @@
 
       loadingIndicator.style.display = 'block';
       scoresTable.style.display = 'none';
-      studentNamesRow.innerHTML = '<th>학교명</th><th>전공</th>';  // 학교명과 전공 헤더 초기화
+      studentNamesRow.innerHTML = '<th>군</th><th>학교명</th><th>전공</th>';  // 군, 학교명, 전공 헤더 초기화
       scoreRows.innerHTML = '';  // 기존 점수 데이터 초기화
 
       fetch('https://supermax.kr/api/calculate-scores-for-all-students')
@@ -60,43 +61,58 @@
             studentNamesRow.appendChild(th);
           });
 
-          // 각 학생의 학교 및 점수 정보 추가
-          const scoresBySchool = {};
+          // 각 학생의 학교, 전공 및 점수 정보 추가
+          let scoresBySchool = [];
 
           data.forEach(student => {
             student.scores.forEach(score => {
-              if (!scoresBySchool[score.학교명]) {
-                scoresBySchool[score.학교명] = {};
-              }
-              if (!scoresBySchool[score.학교명][score.전공]) {
-                scoresBySchool[score.학교명][score.전공] = {};
-              }
-              scoresBySchool[score.학교명][score.전공][student.studentName] = score.totalScore;
+              scoresBySchool.push({
+                군: score.군,               // 군 정보 추가
+                학교명: score.학교명,
+                전공: score.전공,
+                studentName: student.studentName,
+                totalScore: score.totalScore
+              });
             });
           });
 
-          // 학교명과 전공별로 행을 만들어 점수 삽입
-          for (const schoolName in scoresBySchool) {
-            for (const major in scoresBySchool[schoolName]) {
+          // '군'을 가,나,다 순으로 정렬하고, 그 안에서 학교명을 오름차순 정렬
+          scoresBySchool.sort((a, b) => {
+            const 군Order = ['가', '나', '다'];  // 군 순서 지정
+            const 군Comparison = 군Order.indexOf(a.군) - 군Order.indexOf(b.군);
+            if (군Comparison !== 0) return 군Comparison;
+            return a.학교명.localeCompare(b.학교명);  // 같은 군 내에서 학교명을 오름차순 정렬
+          });
+
+          // 정렬된 데이터를 테이블에 삽입
+          let currentSchool = '';
+          scoresBySchool.forEach(score => {
+            if (score.학교명 !== currentSchool || score.군 !== currentSchool.군) {
               const row = document.createElement('tr');
 
+              const 군Cell = document.createElement('td');
+              군Cell.textContent = score.군;
+              row.appendChild(군Cell);
+
               const schoolCell = document.createElement('td');
-              schoolCell.textContent = schoolName;
+              schoolCell.textContent = score.학교명;
               row.appendChild(schoolCell);
 
               const majorCell = document.createElement('td');
-              majorCell.textContent = major;
+              majorCell.textContent = score.전공;
               row.appendChild(majorCell);
 
+              // 각 학생의 점수를 추가
               data.forEach(student => {
                 const scoreCell = document.createElement('td');
-                scoreCell.textContent = scoresBySchool[schoolName][major][student.studentName] || 'N/A';
+                scoreCell.textContent = score.studentName === student.studentName ? score.totalScore : 'N/A';
                 row.appendChild(scoreCell);
               });
 
               scoreRows.appendChild(row);
+              currentSchool = score.학교명;
             }
-          }
+          });
         })
         .catch(error => {
           console.error('점수 불러오기 오류:', error);
