@@ -46,7 +46,7 @@
       scoresTable.style.display = 'none';
       tbody.innerHTML = '';  // 기존 데이터를 초기화
 
-      fetch('http://localhost:4000/api/calculate-scores-for-all-students')
+      fetch('https://supermax.kr/api/calculate-scores-for-all-students')
         .then(response => response.json())
         .then(data => {
           loadingIndicator.style.display = 'none';
