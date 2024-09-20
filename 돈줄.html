@@ -141,54 +141,54 @@
         });
       });
 
-    // 학생 성적 정보 불러오기 (POST 방식)
-    function fetchStudentInfo(studentName) {
-      fetch('https://supermax.kr/api/student-info', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ name: studentName })  // 이름을 요청 본문에 전달
-      })
-      .then(response => response.json())
-      .then(data => {
-        // 학생 정보 표시
-        document.getElementById('studentName').textContent = data.이름;
-        document.getElementById('studentGender').textContent = data.성별;
-        document.getElementById('studentSchool').textContent = data.학교;
+ // 학생 성적 정보 불러오기 (POST 방식)
+function fetchStudentInfo(studentName) {
+  fetch('https://supermax.kr/api/student-info', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ name: studentName })  // 이름을 요청 본문에 전달
+  })
+  .then(response => response.json())
+  .then(data => {
+    // 학생 정보 표시
+    document.getElementById('studentName').textContent = data.이름;
+    document.getElementById('studentGender').textContent = data.성별;
+    document.getElementById('studentSchool').textContent = data.학교;
 
-        // 선택 과목명 설정
-        document.getElementById('국어표준점수').textContent = data.국어표준점수 || '-';
-        document.getElementById('수학표준점수').textContent = data.수학표준점수 || '-';
-        document.getElementById('영어표준점수').textContent = data.영어표준점수 || '-';
-        document.getElementById('탐구1표준점수').textContent = data.탐구1표준점수 || '-';
-        document.getElementById('탐구2표준점수').textContent = data.탐구2표준점수 || '-';
-        document.getElementById('한국사표준점수').textContent = data.한국사표준점수 || '-';
+    // 선택 과목명 동적 설정 (헤더 변경)
+    document.querySelector('th:nth-child(2)').textContent = data.국어선택과목 || '국어 선택과목';
+    document.querySelector('th:nth-child(3)').textContent = data.수학선택과목 || '수학 선택과목';
+    document.querySelector('th:nth-child(5)').textContent = data.탐구1선택과목 || '탐구1 선택과목';
+    document.querySelector('th:nth-child(6)').textContent = data.탐구2선택과목 || '탐구2 선택과목';
 
-        document.getElementById('국어백분위').textContent = data.국어백분위 || '-';
-        document.getElementById('수학백분위').textContent = data.수학백분위 || '-';
-        document.getElementById('영어백분위').textContent = data.영어백분위 || '-';
-        document.getElementById('탐구1백분위').textContent = data.탐구1백분위 || '-';
-        document.getElementById('탐구2백분위').textContent = data.탐구2백분위 || '-';
-        document.getElementById('한국사백분위').textContent = data.한국사백분위 || '-';
+    // 선택 과목 점수 설정
+    document.getElementById('국어표준점수').textContent = data.국어표준점수 || '-';
+    document.getElementById('수학표준점수').textContent = data.수학표준점수 || '-';
+    document.getElementById('영어표준점수').textContent = data.영어표준점수 || '-';
+    document.getElementById('탐구1표준점수').textContent = data.탐구1표준점수 || '-';
+    document.getElementById('탐구2표준점수').textContent = data.탐구2표준점수 || '-';
+    document.getElementById('한국사표준점수').textContent = data.한국사표준점수 || '-';
 
-        document.getElementById('국어등급').textContent = data.국어등급 || '-';
-        document.getElementById('수학등급').textContent = data.수학등급 || '-';
-        document.getElementById('영어등급').textContent = data.영어등급 || '-';
-        document.getElementById('탐구1등급').textContent = data.탐구1등급 || '-';
-        document.getElementById('탐구2등급').textContent = data.탐구2등급 || '-';
-        document.getElementById('한국사등급').textContent = data.한국사등급 || '-';
+    document.getElementById('국어백분위').textContent = data.국어백분위 || '-';
+    document.getElementById('수학백분위').textContent = data.수학백분위 || '-';
+    document.getElementById('영어백분위').textContent = data.영어백분위 || '-';
+    document.getElementById('탐구1백분위').textContent = data.탐구1백분위 || '-';
+    document.getElementById('탐구2백분위').textContent = data.탐구2백분위 || '-';
+    document.getElementById('한국사백분위').textContent = data.한국사백분위 || '-';
 
-        // 선택 과목 이름 표시
-        document.querySelector('th[for="국어선택과목"]').textContent = data.국어선택과목 || '-';
-        document.querySelector('th[for="수학선택과목"]').textContent = data.수학선택과목 || '-';
-        document.querySelector('th[for="탐구1선택과목"]').textContent = data.탐구1선택과목 || '-';
-        document.querySelector('th[for="탐구2선택과목"]').textContent = data.탐구2선택과목 || '-';
-      })
-      .catch(error => {
-        console.error('성적표 불러오기 오류:', error.message);
-      });
-    }
+    document.getElementById('국어등급').textContent = data.국어등급 || '-';
+    document.getElementById('수학등급').textContent = data.수학등급 || '-';
+    document.getElementById('영어등급').textContent = data.영어등급 || '-';
+    document.getElementById('탐구1등급').textContent = data.탐구1등급 || '-';
+    document.getElementById('탐구2등급').textContent = data.탐구2등급 || '-';
+    document.getElementById('한국사등급').textContent = data.한국사등급 || '-';
+  })
+  .catch(error => {
+    console.error('성적표 불러오기 오류:', error.message);
+  });
+}
 
     // 모든 학교에 대한 점수 계산 요청 (POST 방식)
     function fetchAllSchoolScores(studentName) {
