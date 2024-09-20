@@ -25,7 +25,8 @@
   <table id="scoresTable" style="display: none;">
     <thead>
       <tr id="studentNamesRow">
-        <th>학교명 / 전공</th>
+        <th>학교명</th>
+        <th>전공</th>
         <!-- 학생 이름들이 여기에 추가될 것입니다. -->
       </tr>
     </thead>
@@ -43,7 +44,7 @@
 
       loadingIndicator.style.display = 'block';
       scoresTable.style.display = 'none';
-      studentNamesRow.innerHTML = '<th>학교명 / 전공</th>';  // 학생 이름 헤더 초기화
+      studentNamesRow.innerHTML = '<th>학교명</th><th>전공</th>';  // 학교명과 전공 헤더 초기화
       scoreRows.innerHTML = '';  // 기존 점수 데이터 초기화
 
       fetch('https://supermax.kr/api/calculate-scores-for-all-students')
@@ -64,28 +65,37 @@
 
           data.forEach(student => {
             student.scores.forEach(score => {
-              const schoolAndMajor = `${score.학교명} / ${score.전공}`;
-              if (!scoresBySchool[schoolAndMajor]) {
-                scoresBySchool[schoolAndMajor] = {};
+              if (!scoresBySchool[score.학교명]) {
+                scoresBySchool[score.학교명] = {};
               }
-              scoresBySchool[schoolAndMajor][student.studentName] = score.totalScore;
+              if (!scoresBySchool[score.학교명][score.전공]) {
+                scoresBySchool[score.학교명][score.전공] = {};
+              }
+              scoresBySchool[score.학교명][score.전공][student.studentName] = score.totalScore;
             });
           });
 
-          // 학교명 / 전공별로 행을 만들어 점수 삽입
-          for (const schoolAndMajor in scoresBySchool) {
-            const row = document.createElement('tr');
-            const schoolCell = document.createElement('td');
-            schoolCell.textContent = schoolAndMajor;
-            row.appendChild(schoolCell);
+          // 학교명과 전공별로 행을 만들어 점수 삽입
+          for (const schoolName in scoresBySchool) {
+            for (const major in scoresBySchool[schoolName]) {
+              const row = document.createElement('tr');
 
-            data.forEach(student => {
-              const scoreCell = document.createElement('td');
-              scoreCell.textContent = scoresBySchool[schoolAndMajor][student.studentName] || 'N/A';
-              row.appendChild(scoreCell);
-            });
+              const schoolCell = document.createElement('td');
+              schoolCell.textContent = schoolName;
+              row.appendChild(schoolCell);
 
-            scoreRows.appendChild(row);
+              const majorCell = document.createElement('td');
+              majorCell.textContent = major;
+              row.appendChild(majorCell);
+
+              data.forEach(student => {
+                const scoreCell = document.createElement('td');
+                scoreCell.textContent = scoresBySchool[schoolName][major][student.studentName] || 'N/A';
+                row.appendChild(scoreCell);
+              });
+
+              scoreRows.appendChild(row);
+            }
           }
         })
         .catch(error => {
