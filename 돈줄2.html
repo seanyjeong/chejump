@@ -11,7 +11,7 @@
     th, td {
       border: 1px solid #dddddd;
       padding: 8px;
-      text-align: left;
+      text-align: center;
     }
     th {
       background-color: #f2f2f2;
@@ -24,26 +24,27 @@
   <div id="loading" style="display: none;">로딩 중...</div>
   <table id="scoresTable" style="display: none;">
     <thead>
-      <tr>
-        <th>학생 이름</th>
-        <th>학교명</th>
-        <th>전공</th>
-        <th>총점</th>
+      <tr id="studentNamesRow">
+        <th>학교명 / 전공</th>
+        <!-- 학생 이름들이 여기에 추가될 것입니다. -->
       </tr>
     </thead>
-    <tbody>
+    <tbody id="scoreRows">
       <!-- 점수 데이터가 여기에 삽입됩니다. -->
     </tbody>
   </table>
+
   <script>
     function loadScores() {
       const loadingIndicator = document.getElementById('loading');
       const scoresTable = document.getElementById('scoresTable');
-      const tbody = scoresTable.querySelector('tbody');
+      const studentNamesRow = document.getElementById('studentNamesRow');
+      const scoreRows = document.getElementById('scoreRows');
 
       loadingIndicator.style.display = 'block';
       scoresTable.style.display = 'none';
-      tbody.innerHTML = '';  // 기존 데이터를 초기화
+      studentNamesRow.innerHTML = '<th>학교명 / 전공</th>';  // 학생 이름 헤더 초기화
+      scoreRows.innerHTML = '';  // 기존 점수 데이터 초기화
 
       fetch('https://supermax.kr/api/calculate-scores-for-all-students')
         .then(response => response.json())
@@ -51,26 +52,40 @@
           loadingIndicator.style.display = 'none';
           scoresTable.style.display = 'table';
 
+          // 학생 이름 추가
           data.forEach(student => {
-            const nameRow = document.createElement('tr');
-            nameRow.innerHTML = `
-              <td rowspan="${student.scores.length}">${student.studentName}</td>
-              <td>${student.scores[0].학교명}</td>
-              <td>${student.scores[0].전공}</td>
-              <td>${student.scores[0].totalScore}</td>
-            `;
-            tbody.appendChild(nameRow);
-
-            for (let i = 1; i < student.scores.length; i++) {
-              const row = document.createElement('tr');
-              row.innerHTML = `
-                <td>${student.scores[i].학교명}</td>
-                <td>${student.scores[i].전공}</td>
-                <td>${student.scores[i].totalScore}</td>
-              `;
-              tbody.appendChild(row);
-            }
+            const th = document.createElement('th');
+            th.textContent = student.studentName;
+            studentNamesRow.appendChild(th);
           });
+
+          // 각 학생의 학교 및 점수 정보 추가
+          const scoresBySchool = {};
+
+          data.forEach(student => {
+            student.scores.forEach(score => {
+              if (!scoresBySchool[score.학교명]) {
+                scoresBySchool[score.학교명] = {};
+              }
+              scoresBySchool[score.학교명][student.studentName] = score.totalScore;
+            });
+          });
+
+          // 학교별로 행을 만들어 점수 삽입
+          for (const schoolName in scoresBySchool) {
+            const row = document.createElement('tr');
+            const schoolCell = document.createElement('td');
+            schoolCell.textContent = schoolName;
+            row.appendChild(schoolCell);
+
+            data.forEach(student => {
+              const scoreCell = document.createElement('td');
+              scoreCell.textContent = scoresBySchool[schoolName][student.studentName] || 'N/A';
+              row.appendChild(scoreCell);
+            });
+
+            scoreRows.appendChild(row);
+          }
         })
         .catch(error => {
           console.error('점수 불러오기 오류:', error);
